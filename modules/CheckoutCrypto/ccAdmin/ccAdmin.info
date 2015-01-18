@@ -1,0 +1,14 @@
+name = checkoutcrypto admin
+description = A library of tools for CheckoutCrypto
+core = 7.x
+package = CheckoutCrypto
+configure = admin/structure/ccdev_admin/manage
+dependencies[] = field
+dependencies[] = ctools
+files[] = settings.inc
+files[] = entity.inc
+; Information added by Drupal.org packaging script on 2014-03-09
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "CheckoutCrypto"
+datestamp = "1394327312"

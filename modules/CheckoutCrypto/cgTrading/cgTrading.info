@@ -1,0 +1,15 @@
+name = Coingateway Trading
+description = Coingateway trading front end.
+core = 7.x
+package = Coingateway
+dependencies[] = field
+dependencies[] = ctools
+stylesheets[all][] = style1.css
+files[] = theme/cgTrading.js
+configure = admin/structure/cgtrading_manage
+
+; Information added by Drupal.org packaging script on 2014-03-09
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "Coingateway"
+datestamp = "1394327312"

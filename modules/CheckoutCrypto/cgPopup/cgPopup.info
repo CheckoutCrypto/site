@@ -1,0 +1,4 @@
+name = Coingateway Popup
+package = Coingateway
+description = Coingateway Popup Tester
+core = 7.x

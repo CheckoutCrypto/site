@@ -1,0 +1,291 @@
+<?php
+/**
+*   CHECKOUTCRYPTO Admin Module - Control, configure, enable/disable API backend
+*	Copyright 2014 CheckoutCrypto.com
+*/
+error_reporting(~0); ini_set('display_errors', 1);
+
+/**
+ * Checkout crypto settings form.
+ */
+function ccAdmin_settings_form() {
+    module_load_include('inc','ccAdmin','includes/settings');
+	return admin_settings_form();
+}
+
+/**
+ * Validate cc payment method settings.
+ */
+function ccAdmin_settings_form_validate($form, &$form_state) {
+ 	module_load_include('inc','ccAdmin','includes/settings');
+	admin_settings_form_validate($form, $form_state);
+}
+
+/**
+ * Implements hook_entity_info().
+ */
+function ccAdmin_entity_info() {
+    module_load_include('inc','ccAdmin','includes/settings');
+	return admin_info();
+}
+
+/**
+ * Implements the uri callback.
+ */
+function ccdev_admin_uri($basic) {
+  return array(
+    'path' => 'ccAdmin/basic/' . $basic->basic_id,
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function ccAdmin_menu() {
+	module_load_include('inc','ccAdmin','includes/settings');
+  return admin_menu();
+}
+
+/**
+ * Basic information for the page.
+ */
+function ccAdmin_info_page() {
+  $content['preface'] = array(
+    '#type' => 'item',
+    '#markup' => t('The ccAdmin provides a simple example entity.'),
+  );
+  if (user_access('administer ccdev_admin entities')) {
+    $content['preface']['#markup'] = t('You can administer these and add fields and change the view !link.',
+      array('!link' => l(t('here'), 'admin/structure/ccdev_admin/manage'))
+    );
+  }
+  $content['table'] = ccdev_admin_list_entities();
+  return $content;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function ccAdmin_permission() {
+	module_load_include('inc','ccAdmin','includes/settings');
+  return admin_permissions();
+}
+
+/**
+ * Returns a render array with all entity_example_basic entities.
+ */
+function ccdev_admin_list_entities() {
+	module_load_include('inc','ccAdmin','includes/entity');
+  return display_admin_entity();
+}
+
+/**
+ * Callback for a page title when this entity is displayed.
+ */
+function ccdev_admin_title($entity) {
+  return t('Your Account Information');
+}
+
+/**
+ * Menu callback to display an entity.
+ */
+function ccdev_admin_view($entity, $view_mode = 'tweaky') {
+  // Our entity type, for convenience.
+  $entity_type = 'ccdev_admin';
+  // Start setting up the content.
+  $entity->content = array(
+    '#view_mode' => $view_mode,
+  );
+  field_attach_prepare_view($entity_type, array($entity->basic_id => $entity),
+    $view_mode);
+  // We call entity_prepare_view() so it can invoke hook_entity_prepare_view()
+  // for us.
+  entity_prepare_view($entity_type, array($entity->basic_id => $entity));
+  // Now field_attach_view() generates the content for the fields.
+  $entity->content += field_attach_view($entity_type, $entity, $view_mode);
+
+  // OK, Field API done, now we can set up some of our own data.
+
+  global $language;
+  $langcode = $language->language;
+  // And now invoke hook_entity_view().
+  module_invoke_all('entity_view', $entity, $entity_type, $view_mode,
+    $langcode);
+  // Now invoke hook_entity_view_alter().
+  drupal_alter(array('ccdev_admin_view', 'entity_view'),
+    $entity->content, $entity_type);
+
+  // And finally return the content.
+  return $entity->content;
+}
+
+/**
+ * Provides a wrapper on the edit form to add a new entity.
+ */
+function ccdev_admin_add() {
+  $entity = entity_get_controller('ccdev_admin')->create();
+  return drupal_get_form('ccdev_admin_form', $entity);
+}
+
+/**
+ * Form function to create an entity_example_basic entity.
+ */
+function ccdev_admin_form($form, &$form_state, $entity) {
+	
+  return $form;
+}
+
+/**
+ * Validation handler for entity_example_basic_add_form form.
+ */
+function ccdev_admin_form_validate($form, &$form_state) {
+  field_attach_form_validate('ccdev_admin', $form_state['values']['basic_entity'], $form, $form_state);
+}
+
+/**
+ * Form submit handler: Submits basic_add_form information.
+ */
+function ccdev_admin_form_submit($form, &$form_state) {
+ // include_once('includes/cc-php/generate_credentials.inc');
+  $entity = $form_state['values']['basic_entity'];
+
+if (user_access('administer ccdev_balance entities')) {
+
+  field_attach_submit('ccdev_admin', $entity, $form, $form_state);
+  $entity = ccdev_admin_save($entity);
+}
+  $form_state['redirect'] = 'ccAdmin/basic/' . $entity->basic_id;
+}
+
+/**
+ * Form deletion handler
+ */
+function ccdev_admin_edit_delete($form, &$form_state) {
+  $entity = $form_state['values']['basic_entity'];
+  entity_example_basic_delete($entity);
+  drupal_set_message(t('The entity %api_key (ID %id) has been deleted',
+    array('%api_key' => $entity->api_key, '%id' => $entity->basic_id))
+  );
+  $form_state['redirect'] = 'ccAdmin';
+}
+
+/**
+ * We save the entity by calling the controller.
+ */
+function ccdev_admin_save(&$entity) {
+  return entity_get_controller('ccdev_admin')->save($entity);
+}
+
+/**
+ * Use the controller to delete the entity.
+ */
+function ccdev_admin_delete($entity) {
+  entity_get_controller('ccdev_admin')->delete($entity);
+}
+
+/**
+ * EntityExampleBasicControllerInterface definition.
+ */
+interface ccAdminBasicControllerInterface
+  extends DrupalEntityControllerInterface {
+
+  /**
+   * Create an entity.
+   */
+  public function create();
+
+  /**
+   * Save an entity.
+   */
+  public function save($entity);
+
+  /**
+   * Delete an entity.
+   */
+  public function delete($entity);
+
+}
+
+/**
+ * EntityExampleBasicController extends DrupalDefaultEntityController.
+ */
+class ccAdminBasicController
+  extends DrupalDefaultEntityController
+  implements ccAdminBasicControllerInterface {
+
+  /**
+   * Create and return a new entity_example_basic entity.
+   */
+  public function create() {
+
+    $entity = new stdClass();
+    $entity->type = 'ccdev_admin';
+    $entity->basic_id = 0;
+    $entity->bundle_type = 'admin_bundle';
+    return $entity;
+  }
+
+  /**
+   * Saves the custom fields using drupal_write_record().
+   */
+  public function save($entity) {
+
+    if (empty($entity->basic_id)) {
+	global $user;
+      $entity->user_id = $user->uid;
+    }
+    // Invoke hook_entity_presave().
+    module_invoke_all('entity_presave', $entity, 'ccdev_admin');
+    $primary_keys = $entity->basic_id ? 'basic_id' : array();
+    // Write out the entity record.
+    drupal_write_record('ccdev_admin', $entity, $primary_keys);
+    $invocation = 'entity_insert';
+    if (empty($primary_keys)) {
+      field_attach_insert('ccdev_admin', $entity);
+    }
+    else {
+      field_attach_update('ccdev_admin', $entity);
+      $invocation = 'entity_update';
+    }
+    // Invoke either hook_entity_update() or hook_entity_insert().
+    module_invoke_all($invocation, $entity, 'ccdev_admin');
+    return $entity;
+  }
+
+  /**
+   * Delete a single entity.
+   */
+  public function delete($entity) {
+    $this->deleteMultiple(array($entity));
+  }
+
+  /**
+   * Delete one or more entity_example_basic entities.
+   */
+  public function deleteMultiple($entities) {
+    $basic_ids = array();
+    if (!empty($entities)) {
+      $transaction = db_transaction();
+      try {
+        foreach ($entities as $entity) {
+          // Invoke hook_entity_delete().
+          module_invoke_all('entity_delete', $entity, 'ccdev_admin');
+          field_attach_delete('ccdev_admin', $entity);
+          $basic_ids[] = $entity->basic_id;
+        }
+        db_delete('ccdev_admin')
+          ->condition('basic_id', $basic_ids, 'IN')
+          ->execute();
+      }
+      catch (Exception $e) {
+        $transaction->rollback();
+        watchdog_exception('ccAdmin', $e);
+        throw $e;
+      }
+    }
+  }
+}
+
+/**
+ * @} End of "defgroup entity_example".
+ */

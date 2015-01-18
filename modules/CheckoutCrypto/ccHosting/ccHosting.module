@@ -1,0 +1,268 @@
+<?php
+/**
+ * CheckoutCrypto Hosting Module - Add/view/edit rehosted vps
+ * Copyright 2014 CheckoutCrypto
+ */
+
+/**
+ * Implements hook_entity_info().
+ */
+function ccHosting_entity_info() {
+  module_load_include('inc','ccHosting','includes/settings');
+	return hosting_info();
+}
+
+/**
+ * Fetch a basic object.
+ */
+function ccdev_hosting_load($basic_id = NULL, $reset = FALSE) {
+  $basic_ids = (isset($basic_id) ? array($basic_id) : array());
+  $basic = ccdev_hosting_load_multiple($basic_ids, array(), $reset);
+  return $basic ? reset($basic) : FALSE;
+}
+
+/**
+ * Implements the uri callback.
+ */
+function ccdev_hosting_uri($basic) {
+  return array(
+    'path' => 'ccMods/ccHosting/basic/' . $basic->basic_id,
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function ccHosting_menu() {
+  module_load_include('inc','ccHosting','includes/settings');
+  return hostin_menu();
+}
+
+/**
+ * Basic information for the page.
+ */
+function ccHosting_info_page() {
+  module_load_include('inc','ccHosting','includes/page');
+	return hosting_page();
+}
+
+/**
+ * Implements hook_permission().
+ */
+function ccHosting_permission() {
+  module_load_include('inc','ccHosting','includes/settings');
+	return hosting_permissions();
+}
+
+/**
+ * Ajax menu callback.
+ */
+function ccHosting_manage_callback($ajax, $site_id = NULL) {
+
+  if ($ajax) {
+    ctools_add_js('ajax-responder');
+    ctools_include('ajax');
+    ctools_include('modal');
+    $form_state = array(
+      'ajax' => TRUE,
+      'title' => t('Manage Site'),
+      'site_id' => $site_id,
+    );
+    // Use ctools to generate ajax instructions for the browser to create
+    // a form in a modal popup.
+    $output = ctools_modal_form_wrapper('manage_form', $form_state);
+ 
+    // Return the ajax instructions to the browser via ajax_render().
+    print ajax_render($output);
+    drupal_exit();
+  }
+  else {
+    return drupal_get_form('manage_form');
+  }
+}
+
+/**
+ * Callback for a page title when this entity is displayed.
+ */
+function ccdev_hosting_title($entity) {
+  return t('Your Hosting Information');
+}
+
+/**
+ * Menu callback to display an entity.
+ */
+function ccdev_hosting_view($entity, $view_mode = 'tweaky') {
+  // Our entity type, for convenience.
+  $entity_type = 'ccdev_hosting';
+  // Start setting up the content.
+  $entity->content = array(
+    '#view_mode' => $view_mode,
+  );
+  field_attach_prepare_view($entity_type, array($entity->basic_id => $entity),
+    $view_mode);
+  entity_prepare_view($entity_type, array($entity->basic_id => $entity));
+  $entity->content += field_attach_view($entity_type, $entity, $view_mode);
+
+  global $language;
+  $langcode = $language->language;
+  // And now invoke hook_entity_view().
+  module_invoke_all('entity_view', $entity, $entity_type, $view_mode,
+    $langcode);
+  // Now invoke hook_entity_view_alter().
+  drupal_alter(array('ccdev_hosting_view', 'entity_view'),
+    $entity->content, $entity_type);
+
+  // And finally return the content.
+  return $entity->content;
+}
+
+/**
+ * Provides a wrapper on the edit form to add a new entity.
+ */
+function ccdev_hosting_add() {
+  $entity = entity_get_controller('ccdev_hosting')->create();
+  return drupal_get_form('ccdev_hosting_form', $entity);
+}
+
+/**
+ * Validation handler for entity_example_basic_add_form form.
+ */
+function ccdev_hosting_form_validate($form, &$form_state) {
+  field_attach_form_validate('ccdev_hosting', $form_state['values']['basic_entity'], $form, $form_state);
+}
+
+
+
+/**
+ * Form deletion handler.
+ */
+function ccdev_hosting_edit_delete($form, &$form_state) {
+  $entity = $form_state['values']['basic_entity'];
+  entity_example_basic_delete($entity);
+  drupal_set_message(t('The entity %site_name has been deleted',
+    array('%site_name' => $entity->site_name, '%id' => $entity->basic_id))
+  );
+  $form_state['redirect'] = 'ccMods/ccHosting';
+}
+
+
+/**
+ * We save the entity by calling the controller.
+ */
+function ccdev_hosting_save(&$entity) {
+  return entity_get_controller('ccdev_hosting')->save($entity);
+}
+
+/**
+ * Use the controller to delete the entity.
+ */
+function ccdev_hosting_delete($entity) {
+  entity_get_controller('ccdev_hosting')->delete($entity);
+}
+
+/**
+ * EntityExampleBasicControllerInterface definition.
+ */
+interface ccHostingBasicControllerInterface
+  extends DrupalEntityControllerInterface {
+
+  public function create();
+  public function save($entity);
+  public function delete($entity);
+
+}
+
+/**
+ * EntityExampleBasicController extends DrupalDefaultEntityController.
+ */
+class ccHostingBasicController
+  extends DrupalDefaultEntityController
+  implements ccHostingBasicControllerInterface {
+
+  /**
+   * Create and return a new entity_example_basic entity.
+   */
+  public function create() {
+
+    $entity = new stdClass();
+    $entity->type = 'ccdev_hosting';
+ 	$entity->basic_id = '';
+    $entity->user_id = 0;
+    $entity->bundle_type = 'ccdev_hosting_bundle';
+    $entity->site_name = 'site';
+    $entity->site_domain = 'http://www.';
+	$entity->site_cms = '';
+    $entity->site_description = '';
+	$entity->site_mysql_admin = 'admin';
+	$entity->site_mysql_pass = 'admin';
+	$entity->site_mysql_table = 'cchost_';
+	$entity->isEnabled = 'true';
+	$entity->group_price = '';
+	$entity->created = date("Y-m-d H:i:s");
+    return $entity;
+  }
+
+  /**
+   * Saves the custom fields using drupal_write_record().
+   */
+  public function save($entity) {
+
+    if (empty($entity->basic_id)) {
+	global $user;
+      $entity->user_id = $user->uid;
+    }
+    // Invoke hook_entity_presave().
+    module_invoke_all('entity_presave', $entity, 'ccdev_hosting');
+    $primary_keys = $entity->basic_id ? 'basic_id' : array();
+    // Write out the entity record.
+    drupal_write_record('ccdev_hosting', $entity, $primary_keys);
+    $invocation = 'entity_insert';
+    if (empty($primary_keys)) {
+      field_attach_insert('ccdev_hosting', $entity);
+    }
+    else {
+      field_attach_update('ccdev_hosting', $entity);
+      $invocation = 'entity_update';
+    }
+    // Invoke either hook_entity_update() or hook_entity_insert().
+    module_invoke_all($invocation, $entity, 'ccdev_hosting');
+    return $entity;
+  }
+
+  /**
+   * Delete a single entity.
+   */
+  public function delete($entity) {
+    $this->deleteMultiple(array($entity));
+  }
+
+  /**
+   * Delete one or more entity_example_basic entities.
+   */
+  public function deleteMultiple($entities) {
+    $basic_ids = array();
+    if (!empty($entities)) {
+      $transaction = db_transaction();
+      try {
+        foreach ($entities as $entity) {
+          // Invoke hook_entity_delete().
+          module_invoke_all('entity_delete', $entity, 'ccdev_hosting');
+          field_attach_delete('ccdev_hosting', $entity);
+          $basic_ids[] = $entity->basic_id;
+        }
+        db_delete('ccdev_hosting')
+          ->condition('basic_id', $basic_ids, 'IN')
+          ->execute();
+      }
+      catch (Exception $e) {
+        $transaction->rollback();
+        watchdog_exception('ccHosting', $e);
+        throw $e;
+      }
+    }
+  }
+}
+
+/**
+ * @} End of "defgroup entity_example".
+ */

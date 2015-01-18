@@ -1,0 +1,95 @@
+<?php
+/**
+ * Use requirements to ensure that the CTools CSS cache directory can be
+ * created and that the PHP version requirement is met.
+ */
+function ccAdmin_requirements($phase) {
+  $requirements = array();
+
+  return $requirements;
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function ccAdmin_uninstall() {
+  field_attach_delete_bundle('ccdev_admin', 'admin_bundle');
+}
+
+/**
+ * CTools' initial schema; separated for the purposes of updates.
+ *
+ * DO NOT MAKE CHANGES HERE. This schema version is locked.
+ */
+function ccAdmin_schema() {
+  $schema['ccdev_admin'] = array(
+    'description' => t('One ring to rule them all.'),
+    'fields' => array(
+      'basic_id' => array(
+        'type' => 'varchar',
+        'length' => '64',
+        'not null' => TRUE,
+        'description' => 'the unique identifier',
+      ),
+      // If we allow multiple bundles, then the schema must handle that;
+      // We'll put it in the 'bundle_type' field to avoid confusion with the
+      // entity type.
+      'bundle_type' => array(
+        'description' => 'The bundle type',
+        'type' => 'text',
+        'size' => 'medium',
+        'not null' => TRUE,
+      ),
+     'disable_all_coins' => array(
+        'description' => 'Disable all coins',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => '0',
+      ),
+     'disable_worker' => array(
+        'description' => 'Disables worker completely',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => '0',
+      ),
+     'disable_transaction' => array(
+        'description' => 'Disables all types of transactions',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => '0',
+      ),
+     'disable_withdraw' => array(
+        'description' => 'Disable only withdraw work orders',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => '0',
+      ),
+     'disable_getnewaddress' => array(
+        'description' => 'Disable all getnewaddress work orders',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => '0',
+      ),
+     'disable_getbalance' => array(
+        'description' => 'The admin role of apikey',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => '0',
+      ),
+     'disable_rate' => array(
+        'description' => 'Disable rates queries (essentially crippling the entire site)',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => '0',
+      ),
+     'worker_status' => array(
+        'description' => 'flag for when worker is active',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => '0',
+      ),
+    ),
+    'primary key' => array('basic_id'),
+  );
+  return $schema;
+}

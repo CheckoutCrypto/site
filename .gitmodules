@@ -1,0 +1,24 @@
+[submodule "modules/ctools"]
+	path = modules/ctools
+	url = http://git.drupal.org/project/ctools.git
+	branch = 7.x-1.x
+[submodule "modules/jquery_update"]
+	path = modules/jquery_update
+	url = http://git.drupal.org/project/jquery_update.git
+	branch = 7.x-2.x
+[submodule "modules/mailsystem"]
+	path = modules/mailsystem
+	url = http://git.drupal.org/project/mailsystem.git
+	branch = 7.x-3.x
+[submodule "modules/mimemail"]
+	path = modules/mimemail
+	url = http://git.drupal.org/project/mimemail.git
+	branch = 7.x-1.x
+[submodule "modules/smtp"]
+	path = modules/smtp
+	url = http://git.drupal.org/project/smtp.git
+	branch = 7.x-1.x
+[submodule "themes/bootstrap"]
+	path = themes/bootstrap
+	url = http://git.drupal.org/project/bootstrap.git
+	branch = 7.x-3.x

@@ -1,0 +1,243 @@
+<?php
+
+/**
+ * CheckoutCrypto Service Charge Module   - Charge any cryptocurrency for any service
+ * Copyright 2014 CheckoutCrypto
+ */
+ error_reporting(~0); ini_set('display_errors', 1);
+
+/**
+ * Implements the uri callback.
+ */
+function ccdev_service_uri($basic) {
+  return array(
+    'path' => 'ccService/basic/' . $basic->basic_id,
+  );
+}
+
+/**
+ * Implementation of hook_preprocess().
+ */
+function ccService_preprocess(&$variables, $hook) {
+  module_load_include('inc', 'ccService', 'includes/settings');
+	$settings = service_theme();
+  drupal_add_js($settings, 'setting');
+}
+
+/**
+ * Implements hook_menu().
+ */
+function ccService_menu() {
+   module_load_include('inc', 'ccService', 'includes/settings');
+	return service_menu();
+}
+
+/**
+ * Implements hook_permission().
+ */
+function ccService_permission() {
+	module_load_include('inc', 'ccService', 'includes/settings');
+	return service_permissions();
+}
+/**
+ * Basic information for the page.
+ */
+function ccService_info_page() {
+   module_load_include('inc', 'ccService', 'includes/page');
+	return service_info_page();
+}
+
+/**
+ * Basic information for the page.
+ */
+function ccService_complete_page() {
+	module_load_include('inc', 'ccService', 'includes/page');
+	return service_complete_page();
+}
+
+/**
+ * Basic information for the page.
+ */
+function ccService_fund_complete() {
+	module_load_include('inc', 'ccService', 'includes/page');
+	return service_fund_complete();
+}
+
+
+function ccService_form_submit($form, &$form_state){
+	module_load_include('inc', 'ccService', 'includes/form');
+	module_load_include('inc', 'ccService', 'includes/lib');
+	module_load_include('inc', 'ccService', 'includes/api');
+	global $user;
+	$order = getOrder($user->uid, $form_state['group']);	 	/// check if uc_payment_cc order exists
+
+	if(isset($order)){
+		if($order['pay_status'] == "service_charge_pending"){
+			$commands[] = fillServiceWrapper('POT', '2');
+			//$commands[] = fillPaymentWrapper('0', 'potcoin', 'pot', '10');
+			print ajax_render($commands);
+			drupal_exit(); 
+
+		}else if($order['pay_status'] == "address_pending"){
+				$resultOrder = ccApiNewOrder($order['coin_code'], $order['coin_amount']);
+
+				if($resultOrder['success'] != FALSE){
+					sleep(1);
+					$resultAddress = ccApiOrderStatus($resultOrder['queue_id'], $order['coin_code']);
+					
+					if($resultAddress['success'] != FALSE){		
+						// if successful update or with address and queue_address(status id)
+						$balance = getBalanceByCoin($coin);
+						$address = $resultAddress['address'];
+
+						updateOrderAddress($order['order_id'], $user->uid, $order['grp_id'], $resultOrder['queue_id'], $resultAddress['address'], '0', 'payment_pending');
+						fillPaymentWrapper($balance, $order['coin_name'], $order['coin_name'], $order['coin_amount'], $resultAddress['address']);						
+					}
+				}
+		}else if($order['pay_status'] == "payment_pending"){
+
+					$resultOrder = ccApiAddressBalance($order['coin_code'], $order['coin_amount'], $order['coin_address']);
+					if($resultOrder['success'] != FALSE){
+						sleep(1);
+						$resultPayment = ccApiOrderStatus($resultOrder['queue_id'], $order['coin_code']);
+						if($resultPayment['balance'] != FALSE){	
+							if($resultPayment['balance'] >= $order['coin_amount']){
+								updateOrder($order['order_id'], $user->uid, $order['grp_id'], $resultOrder['queue_id'], $order['coin_amount'], $resultPayment['balance'], $order['coin_code'], "payment_complete");
+								/// redirect completed
+  								$commands[] = ctools_modal_command_dismiss();
+        						$commands[] = ctools_ajax_command_redirect('ccService/fund/complete');
+        						drupal_set_message('Your purchase is now complete. A receipt will be emailed to you');
+								print ajax_render($commands);
+								drupal_exit();
+							}else{
+
+								updateOrder($order['order_id'], $user->uid, $order['grp_id'], $resultOrder['queue_id'], $order['coin_amount'], $resultPayment['balance'], $order['coin_code'], "payment_pending");
+							}
+						}else{
+							updateOrder($order['order_id'], $user->uid, $order['grp_id'], $resultOrder['queue_id'],  $order['coin_amount'], '0', $order['coin_code'], "payment_pending");
+						}
+					}
+		}else if($order['pay_status'] == "service_charged"){
+			module_load_include('inc', 'ccAccount', 'includes/cc-php/lib');
+			ccApiServiceCharge($order['grp_id'], $order['coin_code']); 
+			updateAccountCoin($user->uid, $order['coin_code']);
+			updateOrder($order['order_id'], $user->uid, $order['grp_id'], '0', $order['coin_amount'], $order['coin_amount'], $order['coin_code'], "payment_complete");
+			$commands[] = ctools_modal_command_dismiss();
+        	$commands[] = ctools_ajax_command_redirect('ccService/complete');
+        	drupal_set_message('Service Charges are completed! A receipt will be emailed to you.  Remember, you will be billed 30 days from today at this time, make sure you have enough coin to cover the bill for the following month.');
+			print ajax_render($commands);
+			drupal_exit();
+		}
+	}
+}
+
+/*
+*   Service Fund Check + getnewaddress + getreceived Callback
+*/
+function ccService_callback($form, &$form_state){
+global $user;
+   module_load_include('inc', 'ccCoin', 'includes/cc-php/lib');
+   module_load_include('inc', 'ccService', 'includes/lib');
+   module_load_include('inc', 'ccService', 'includes/form');
+   module_load_include('inc', 'ccGroup', 'includes/cc-php/lib');
+
+			$type = sanitizeType();
+			$group = sanitizeGroup();
+			$coin = sanitizeCoin();
+
+			if(isset($type) && isset($group) && isset($coin)){
+				$groupdata = array();
+				$txfee = getCoinTxFee($coin);
+				$groupdata = getGroupData($group);
+				$amount = getCoinRate($coin, $groupdata['grp_price']);
+				$subtotal = ($amount) + $txfee;
+
+				switch($type){
+					case "balance":
+						$balance = getBalanceByCoin($coin);
+
+						$total = $balance - $subtotal;
+						if($total > 0){
+							/// valid for service charge
+							$valid = true;
+							$missing = 0;
+							$order = getOrder($user->uid, $group);	/// check if order exists
+							if(!empty($order)){
+								updateOrder($order['order_id'], $user->uid, $group, '0', $subtotal, '0.0', $coin, "service_charge_pending");
+							}else{
+								addOrder('service_charge_pending', $user->uid, $group, $subtotal, $coin, '0');
+							}
+						}else{
+							/// not enough funds to charge
+							$valid = false;
+							$missing = $total*(-1);
+							$order = getOrder($user->uid, $group);	/// check if order exists
+							if(isset($order)){
+								updateOrder($order['order_id'], $user->uid, $group, '0', $missing,'', $coin, "service_charge_pending");
+							}else{
+								addOrder('address_pending', $user->uid, $group, $missing, $coin, '0');
+							}
+						}  
+						$result = array('valid' => $valid, 'missing' => $missing, 'amount' => $subtotal, 'days' => $groupdata['grp_payment_length'], 'balance' => $balance, 'coin' =>$coin );
+
+					break;
+					case "getnewaddress":
+						$apikey = getUserKey();
+					//	$queueid = ccGetNewAddress($apikey, $coin, $amount); 
+				
+					break;
+					case "display_charge":
+						$groupdata = array();
+						$result = array('valid' => $form_state, 'coin' => $coin );
+
+					break;
+					case "final_charge":
+						$groupdata = array();
+						$order = getOrder($user->uid, $group);	 	/// check if payment_cc order exists
+						updateOrder($order['order_id'], $user->uid, $group, '', $order['coin_amount'], $order['coin_amount'], $order['coin_code'], 'service_charged');
+						$result = array('valid' => $order['order_id'], 'coin' => $coin );
+					break; 
+
+			}
+  			drupal_json_output($result);
+	 		 drupal_exit();	
+		}
+}
+
+
+/*
+* Service Callback
+*/
+function ccService_funds_callback($ajax, $group) {
+  if ($ajax) {
+   module_load_include('inc', 'ccService', 'includes/form');
+    ctools_include('ajax');
+    ctools_include('modal');
+    ctools_add_js('ajax-responder');
+    drupal_add_js('sites/all/modules/CheckoutCrypto/ccService/theme/ccService.js', 'file');
+    drupal_add_css('sites/all/modules/CheckoutCrypto/ccService/theme/ccService.css', 'file');
+    $form_state = array(
+      'ajax' => TRUE,
+      'title' => t('Service Charge'),
+      'group' => $group,
+    );
+    $time_limit = 9000;
+    $ccStore_settings = array(
+		'group' => $group,
+        'time_limit' => $time_limit
+    );
+    drupal_add_js(array('ccService' => $ccStore_settings), 'setting');
+
+    $output = ctools_modal_form_wrapper('ccService_form', $form_state);
+ 
+    if (!empty($form_state['ajax_commands'])) {
+      $output = $form_state['ajax_commands'];
+    }
+
+    print ajax_render($output);
+    drupal_exit();
+  }
+  else {
+    return drupal_get_form('ccService_form');
+  }
+}

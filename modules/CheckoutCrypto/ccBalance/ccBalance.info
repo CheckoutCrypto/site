@@ -1,0 +1,24 @@
+name = checkoutcrypto Balance
+description = add/edit/remove/list balances
+core = 7.x
+package = CheckoutCrypto
+dependencies[] = field
+dependencies[] = ctools
+configure = admin/structure/ccdev_balance/manage
+files[] = includes/cc-php/cc.inc
+files[] = includes/cc-php/api.inc
+files[] = includes/cc-php/lib.inc
+files[] = includes/cc-php/page.inc
+files[] = includes/cc-php/forms.inc
+files[] = includes/cc-php/forms_sub.inc
+files[] = includes/cc-php/settings.inc
+files[] = includes/cc-php/entity.inc
+files[] = includes/cc-php/entity_load.inc
+files[] = includes/cc-php/validate.inc
+files[] = includes/GAuth/GoogleAuthenticator.inc
+
+; Information added by Drupal.org packaging script on 2014-03-09
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "CheckoutCrypto"
+datestamp = "1394327312"

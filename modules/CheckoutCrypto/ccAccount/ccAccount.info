@@ -1,0 +1,14 @@
+name = checkoutcrypto Accounts
+description = account entity with api generator
+core = 7.x
+package = CheckoutCrypto
+dependencies[] = field
+dependencies[] = ctools
+configure = admin/structure/ccdev_account/manage
+
+; Information added by Drupal.org packaging script on 2014-03-09
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "CheckoutCrypto"
+datestamp = "1394327312"
+

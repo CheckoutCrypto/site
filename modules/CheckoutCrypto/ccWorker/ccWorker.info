@@ -1,0 +1,12 @@
+name = checkoutcrypto Worker
+description = daemon Worker display.
+core = 7.x
+package = CheckoutCrypto
+dependencies[] = field
+configure = admin/structure/ccdev_work_orders/manage
+
+; Information added by Drupal.org packaging script on 2014-03-09
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "CheckoutCrypto"
+datestamp = "1394327312"

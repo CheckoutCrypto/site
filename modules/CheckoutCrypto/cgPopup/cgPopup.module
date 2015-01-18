@@ -1,0 +1,67 @@
+<?php
+
+
+/**
+ * Basic information for the page.
+ */
+function cgPopup_menu() {
+  module_load_include('inc','cgPopup','includes/settings');
+	return popup_menu();
+}
+
+/**
+ * Implements hook_permission().
+ */
+function cgPopup_permission() {
+  module_load_include('inc','cgPopup','includes/settings');
+	return popup_permissions();
+}
+
+/**
+ * Basic information for the page.
+ */
+function cgPopup_info_page() {
+  module_load_include('inc','cgPopup','includes/page');
+	return popup_page();
+}
+
+/**
+ * Declare what blocks are provided by this module.
+ * Implements hook_block_info().
+ */
+function cgPopup_block_info(){
+  module_load_include('inc','cgPopup','includes/block');
+	return popup_block_info();
+}
+
+/**
+ * Define what our block is going to look like.
+ * Implements hook_block_view().
+ */
+function cgPopup_block_view($block_key){
+  module_load_include('inc','cgPopup','includes/block');
+	return popup_block_view($block_key);
+}
+
+function my_popup_form_submit($form, &$form_state){
+
+	$commands = array();
+	$form['content'] = array('#markup' => '<p>Selected currency:</p>');
+           
+	$commands[] = ajax_command_replace('#popup_content', 'test');
+	print ajax_render($commands);
+	drupal_exit();
+}
+
+
+function my_popup_form_callback($form, &$form_state){
+
+	$commands = array();
+	$form['content'] = array('#markup' => '<p>Selected currency:</p>');
+           
+	$commands[] = ajax_command_replace('#popup_content', 'test');
+	print ajax_render($commands);
+	drupal_exit();
+}
+
+?>

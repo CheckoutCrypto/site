@@ -1,0 +1,411 @@
+<?php
+/**
+*  CHECKOUTCRYPTO ACCOUNT MODULE
+*	Copyright 2014 CheckoutCrypto.com
+ */
+
+error_reporting(~0); ini_set('display_errors', 1);
+
+
+/*
+*  Give register use a default api key, OTP + coin(e.g. BTC wallet)
+*/
+function ccAccount_form_alter(&$form, &$form_state, $form_id) {
+ if ($form_id == 'user_register_form') {
+    $form['#submit'][] = 'ccAccount_user_register_form_submit';
+  }
+}
+
+function ccAccount_menu_alter(&$items){
+  $items['user']['type'] = MENU_CALLBACK;
+  $items['user/register']['type'] = MENU_CALLBACK;
+  $items['user/password']['type'] = MENU_CALLBACK;
+}
+
+function ccAccount_user_register_form_submit(&$form, &$form_state){
+ 	module_load_include('inc', 'ccBalance', 'includes/cc-php/lib');
+ 	module_load_include('inc', 'ccAccount', 'includes/cc-php/lib');
+ 	module_load_include('inc', 'ccCoin', 'includes/cc-php/api');
+ 	 module_load_include('inc','ccCoin','includes/cc-php/lib');
+		$userid = getLastUser();   /// we don't have a userid, for this new user, yet. We have to go get one.
+		/// create new OTP row
+			addUserOTP($userid, 'BTC', 'Bitcoin' );
+		/// create new balance row
+			addUserBalance($userid, 'BTC', 'Bitcoin' );
+		/// generate api key if none already there
+			ccGenApiKey($userid, false, 'BTC');
+
+		/// generate new address for account (we need one to calculate balance)
+		$response = ccGetInitAddress($userid, 'BTC');
+		if(isset($response['response']['queue_id'])) {
+				$result['queue_id'] = $response['response']['queue_id'];
+				$result['success'] = TRUE;
+				$address = ccApiStatus($result['queue_id'], 'BTC');
+				/// do anything with address i.e. use for alternative coin storage
+		}	
+}
+
+/**
+ * Implements hook_entity_info().
+ */
+function ccAccount_entity_info() {
+  module_load_include('inc','ccAccount','includes/cc-php/settings');
+  return account_info();
+}
+
+function ccAccount_settings_form(){
+  module_load_include('inc','ccAccount','includes/cc-php/settings');
+	return account_settings_form();
+}
+
+/**
+ * Validate cc payment method settings.
+ */
+function ccAccount_settings_form_validate($form, &$form_state) {
+ 	module_load_include('inc','ccAccount','includes/settings');
+	account_settings_form_validate($form, $form_state);
+}
+
+/**
+ * Implements the uri callback.
+ */
+function ccdev_accounts_uri($basic) {
+  return array(
+    'path' => 'Account/basic/' . $basic->basic_id,
+  );
+}
+
+/**
+ * Implements hook_menu().
+function ccAccount_menu() {
+	module_load_include('inc','ccAccount','includes/cc-php/settings');
+  return account_menu();
+}
+
+/**
+ * Basic information for the page.
+ */
+function ccAccount_info_page() {
+  module_load_include('inc','ccAccount','includes/cc-php/page');
+  return account_info_page();
+}
+
+/**
+ * Basic information for the page.
+ */
+function ccAccount_billing_page() {
+  module_load_include('inc','ccAccount','includes/cc-php/page');
+  return billing_page();
+}
+
+/**
+ * Basic information for the page.
+ */
+function ccAccount_summary_page() {
+  module_load_include('inc','ccAccount','includes/cc-php/page');
+  return summary_page();
+}
+
+/**
+ * Implements hook_permission().
+ */
+function ccAccount_permission() {
+  module_load_include('inc','ccAccount','includes/cc-php/settings');
+  return account_permissions();
+}
+
+/**
+ * Returns a render array with account entities.
+ */
+function ccdev_accounts_list_entities() {
+  module_load_include('inc','ccAccount','includes/cc-php/entity');
+  return display_account_entity();
+}
+
+/**
+ * Callback for a page title when this entity is displayed.
+ */
+function ccdev_accounts_title($entity) {
+  return t('Your Account Information');
+}
+
+/**
+ * Menu callback to display an entity.
+ */
+function ccdev_accounts_view($entity, $view_mode = 'tweaky') {
+  // Our entity type, for convenience.
+  $entity_type = 'ccdev_accounts';
+  // Start setting up the content.
+  $entity->content = array(
+    '#view_mode' => $view_mode,
+  );
+  field_attach_prepare_view($entity_type, array($entity->basic_id => $entity),
+    $view_mode);
+
+  entity_prepare_view($entity_type, array($entity->basic_id => $entity));
+
+  $entity->content += field_attach_view($entity_type, $entity, $view_mode);
+
+  $entity->content['api_key'] = array(
+    '#type' => 'item',
+    '#title' => t('Api Key:'),
+    '#markup' => '<div id="cc_api_key_wrapper">'.$entity->api_key.'</div>',
+  );
+  $entity->content['user_id'] = array(
+    '#type' => 'item',
+    '#title' => t('User ID:'),
+    '#markup' => '<div id="cc_user_id_wrapper">'.$entity->user_id.'</div>',
+  );
+
+  global $language;
+  $langcode = $language->language;
+  module_invoke_all('entity_view', $entity, $entity_type, $view_mode, $langcode);
+  drupal_alter(array('ccdev_accounts_view', 'entity_view'),
+  $entity->content, $entity_type);
+  return $entity->content;
+}
+
+/**
+ * Implements hook_field_extra_fields().
+ */
+function ccAccount_field_extra_fields() {
+  $form_elements['api_key'] = array(
+    'label' => t('API Key'),
+    'description' => t('API Key (an extra form field)'),
+    'weight' => -5,
+  );
+  $display_elements['user_id'] = array(
+    'label' => t('User ID'),
+    'description' => t('User ID (an extra display field)'),
+    'weight' => 0,
+  );
+  $display_elements['api_key'] = array(
+    'label' => t('API KEY'),
+    'description' => t('Just like title, but trying to point out that it is a separate property'),
+    'weight' => 0,
+  );
+
+  // Since we have only one bundle type, we'll just provide the extra_fields
+  // for it here.
+  $extra_fields['ccdev_accounts']['ccdev_account_bundle']['form'] = $form_elements;
+  $extra_fields['ccdev_accounts']['ccdev_account_bundle']['display'] = $display_elements;
+
+  return $extra_fields;
+}
+
+/**
+ * Provides a wrapper on the edit form to add a new entity.
+ */
+function ccdev_accounts_add() {
+  module_load_include('inc','ccAccount','includes/cc-php/lib');
+	$keyexists = checkIfKeyExists();
+	if($keyexists == false){  
+// Create a basic entity structure to be used and passed to the validation
+  // and submission functions.
+  $entity = entity_get_controller('ccdev_accounts')->create();
+  return drupal_get_form('ccdev_accounts_form', $entity);
+	}
+}
+
+/**
+ * Form function to create an entity_example_basic entity.
+ */
+function ccdev_accounts_form($form, &$form_state, $entity) {
+  $form['api_key'] = array(
+    '#title' => t('API KEY'),
+  );
+  $form['basic_entity'] = array(
+    '#type' => 'value',
+    '#value' => $entity,
+  );
+
+  field_attach_form('ccdev_accounts', $entity, $form, $form_state);
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Generate API key'),
+    '#weight' => 100,
+  );
+  return $form;
+}
+
+
+/**
+ * Validation handler for entity_example_basic_add_form form.
+ *
+ * We pass things straight through to the Field API to handle validation
+ * of the attached fields.
+ */
+function ccdev_accounts_form_validate($form, &$form_state) {
+  field_attach_form_validate('ccdev_accounts', $form_state['values']['basic_entity'], $form, $form_state);
+}
+
+
+/**
+ * Form submit handler: Submits basic_add_form information.
+ */
+function ccdev_accounts_form_submit($form, &$form_state) {
+  include_once('includes/cc-php/generate_credentials.inc');
+  include_once('includes/cc-php/lib.inc');
+  $entity = $form_state['values']['basic_entity'];
+
+  $ccCred = new ccCredentials();
+
+  $entity->api_key = $ccCred->generateAPI();
+  $entity->walletname = $ccCred->generateWalletName();
+  writeBillingSummary();
+  $entity->default_coin = 'none';
+
+  field_attach_submit('ccdev_accounts', $entity, $form, $form_state);
+  $entity = ccdev_accounts_save($entity);
+  $form_state['redirect'] = 'Account/basic/' . $entity->basic_id;
+}
+
+/**
+ * Form deletion handler.
+ */
+function ccdev_accounts_edit_delete($form, &$form_state) {
+  $entity = $form_state['values']['basic_entity'];
+  entity_example_basic_delete($entity);
+  drupal_set_message(t('The entity %api_key (ID %id) has been deleted',
+    array('%api_key' => $entity->api_key, '%id' => $entity->basic_id))
+  );
+  $form_state['redirect'] = 'Account';
+}
+
+
+/**
+ * We save the entity by calling the controller.
+ */
+function ccdev_accounts_save(&$entity) {
+  return entity_get_controller('ccdev_accounts')->save($entity);
+}
+
+/**
+ * Use the controller to delete the entity.
+ */
+function ccdev_accounts_delete($entity) {
+  entity_get_controller('ccdev_accounts')->delete($entity);
+}
+
+/**
+ * EntityExampleBasicControllerInterface definition.
+ */
+interface ccAccountBasicControllerInterface
+  extends DrupalEntityControllerInterface {
+
+  /**
+   * Create an entity.
+   */
+  public function create();
+
+  /**
+   * Save an entity.
+   */
+  public function save($entity);
+
+  /**
+   * Delete an entity.
+   */
+  public function delete($entity);
+
+}
+
+/**
+ * EntityExampleBasicController extends DrupalDefaultEntityController.
+ */
+class ccAccountBasicController
+  extends DrupalDefaultEntityController
+  implements ccAccountBasicControllerInterface {
+
+  /**
+   * Create and return a new entity_example_basic entity.
+   */
+  public function create() {
+
+    $entity = new stdClass();
+    $entity->type = 'ccdev_accounts';
+    $entity->basic_id = 0;
+    $entity->bundle_type = 'ccdev_account_bundle';
+    $entity->api_key = '';
+    $entity->walletname = '';
+	$entity->isMaintenance = '0';
+	$entity->isFrozen = '0';
+	$entity->total_balance = '0';
+	$entity->total_transactions = '0';
+	$entity->default_coin = '';
+	$entity->delay_seconds = '0';
+	$entity->created = date("Y-m-d H:i:s");
+    return $entity;
+  }
+
+  /**
+   * Saves the custom fields using drupal_write_record().
+   */
+  public function save($entity) {
+    // If our entity has no basic_id, then we need to give it a
+    // time of creation.
+
+    if (empty($entity->basic_id)) {
+	global $user;
+      $entity->user_id = $user->uid;
+    }
+
+    module_invoke_all('entity_presave', $entity, 'ccdev_accounts');
+
+    $primary_keys = $entity->basic_id ? 'basic_id' : array();
+
+    drupal_write_record('ccdev_accounts', $entity, $primary_keys);
+
+    $invocation = 'entity_insert';
+
+    if (empty($primary_keys)) {
+      field_attach_insert('ccdev_accounts', $entity);
+    }
+    else {
+      field_attach_update('ccdev_accounts', $entity);
+      $invocation = 'entity_update';
+    }
+    // Invoke either hook_entity_update() or hook_entity_insert().
+    module_invoke_all($invocation, $entity, 'ccdev_accounts');
+    return $entity;
+  }
+
+  /**
+   * Delete a single entity.
+   */
+  public function delete($entity) {
+    $this->deleteMultiple(array($entity));
+  }
+
+  /**
+   * Delete one or more entity_example_basic entities.
+   *
+   */
+  public function deleteMultiple($entities) {
+    $basic_ids = array();
+    if (!empty($entities)) {
+      $transaction = db_transaction();
+      try {
+        foreach ($entities as $entity) {
+          // Invoke hook_entity_delete().
+          module_invoke_all('entity_delete', $entity, 'ccdev_accounts');
+          field_attach_delete('ccdev_accounts', $entity);
+          $basic_ids[] = $entity->basic_id;
+        }
+        db_delete('ccdev_accounts')
+          ->condition('basic_id', $basic_ids, 'IN')
+          ->execute();
+      }
+      catch (Exception $e) {
+        $transaction->rollback();
+        watchdog_exception('ccAccount', $e);
+        throw $e;
+      }
+    }
+  }
+}
+
+
+/**
+ * @} End of "defgroup entity_example".
+ */
