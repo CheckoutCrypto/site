@@ -1,0 +1,40 @@
+mysql:
+  image: mysql
+phpmyadmin:
+  image: corbinu/docker-phpmyadmin
+  ports:
+    - "81:80"
+  links:
+    - mysql
+site:
+  image: checkoutcrypto/site
+  ports:
+    - "82:80"
+  volumes:
+    - /home/user/html_work/site
+  links:
+    - mysql
+api:
+  image: checkoutcrypto/crypto-api
+  ports:
+    - "83:80"
+  volumes:
+    - /home/user/html_work/api
+  links:
+    - mysql
+worker:
+  image: checkoutcrypto/worker
+  ports:
+    - "12311:12311"
+  links:
+    - mysql
+mongo:
+  image: dockerfile/mongodb
+  ports:
+    - "27016:27017"
+dartworker:
+  image: checkoutcrypto/worker-dart
+  ports:
+    - "4240:4240"
+  links:
+    - mongo
