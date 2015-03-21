@@ -1,17 +1,18 @@
-mysql:
-  image: mysql
-phpmyadmin:
-  image: corbinu/docker-phpmyadmin
+dartworker:
+  image: checkoutcrypto/worker-dart
   ports:
-    - "81:80"
+    - "4240:4240"
   links:
-    - mysql
-site:
-  image: checkoutcrypto/site
+    - mongo
+  command: dart /worker/bin/main.dart /bin/bash -D FOREGROUND
+mongo:
+  image: dockerfile/mongodb
   ports:
-    - "82:80"
-  volumes:
-    - /home/user/html_work/site
+    - "27017:27017"
+worker:
+  image: checkoutcrypto/worker
+  ports:
+    - "12311:12311"
   links:
     - mysql
 api:
@@ -22,19 +23,25 @@ api:
     - /home/user/html_work/api
   links:
     - mysql
-worker:
-  image: checkoutcrypto/worker
+  command: /usr/sbin/apache2ctl -D FOREGROUND
+site:
+  image: checkoutcrypto/site
   ports:
-    - "12311:12311"
+    - "82:80"
+  volumes:
+    - /home/user/html_work/site
   links:
     - mysql
-mongo:
-  image: dockerfile/mongodb
+  command: /usr/sbin/apache2ctl -D FOREGROUND
+phpmyadmin:
+  image: corbinu/docker-phpmyadmin
   ports:
-    - "27016:27017"
-dartworker:
-  image: checkoutcrypto/worker-dart
-  ports:
-    - "4240:4240"
+    - "81:80"
   links:
-    - mongo
+    - mysql
+  environment:
+    MYSQL_USERNAME: root
+mysql:
+  image: mysql:5.6.21
+  environment:
+    MYSQL_ROOT_PASSWORD: password
