@@ -55,7 +55,7 @@ docker run -d --link mysql:mysql -e MYSQL_USERNAME=root --name phpmyadmin -p 81:
 sudo docker run -d -it --name cc-site --link mysql:mysql -p 81:80 checkoutcrypto/site
 ```
 
-Then simply access it from the container's public IP with port 80.  Change :82:80  e.g. hostport:containerport
+Then simply access it from the container's public IP with port 80.  Change :82:80  e.g. hostport:containerport 
 
 * Option 2 Development
 
@@ -70,6 +70,11 @@ Finally you can run the docker, linked to the site with:
 ```
 docker run -d --link mysql:mysql -p 81:80 --name cc-site checkoutcrypto/site
 ```
+
+####View/Install CheckoutCrypto Site
+
+visit: http://localhost:81/site/install.php (or whatever container port you chose above) in the browser of an exposed, host, machine, to instantly install the site database tables. All mysql var are preinstalled, assuming you linked it correctly with --link mysql 
+
 
 ###Optional Access
 
