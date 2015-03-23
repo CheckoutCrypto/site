@@ -15,6 +15,7 @@ worker:
     - "12311:12311"
   links:
     - mysql
+  command: /bin/bash
 api:
   image: checkoutcrypto/crypto-api
   ports:
