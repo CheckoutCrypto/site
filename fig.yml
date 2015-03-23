@@ -4,13 +4,13 @@ dartworker:
     - "4240:4240"
   links:
     - mongo
-  command: dart /worker/bin/main.dart /bin/bash -D FOREGROUND
+  command: /bin/bash
 mongo:
   image: dockerfile/mongodb
   ports:
     - "27017:27017"
 worker:
-  image: checkoutcrypto/worker
+  image: checkoutcrypto/worker-qt
   ports:
     - "12311:12311"
   links:
@@ -19,20 +19,14 @@ api:
   image: checkoutcrypto/crypto-api
   ports:
     - "83:80"
-  volumes:
-    - /home/user/html_work/api
   links:
     - mysql
-  command: /usr/sbin/apache2ctl -D FOREGROUND
 site:
   image: checkoutcrypto/site
   ports:
     - "82:80"
-  volumes:
-    - /home/user/html_work/site
   links:
     - mysql
-  command: /usr/sbin/apache2ctl -D FOREGROUND
 phpmyadmin:
   image: corbinu/docker-phpmyadmin
   ports:
