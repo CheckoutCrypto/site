@@ -46,7 +46,7 @@ docker exec -it bitcoin vi /root/.bitcoin/bitcoin.conf
 Don't forget to insert your worker's container IP, under 
 
 ```
-allowip=
+rpcallowip=
 ```
 
 Input everything into CheckoutCrypto Worker config:

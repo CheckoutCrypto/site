@@ -23,5 +23,7 @@ echo "<?php \$databases = array (
 );
 \$drupal_hash_salt = ''; " > /var/www/html/site/sites/default/settings.php
 
+sed -i "s/.*127.0.0.1.*/"'$base_url'"= \"http:\/\/$API_PORT_80_TCP_ADDR\/api.php\";/g" /var/www/html/site/sites/all/modules/CheckoutCrypto/ccAccount/includes/cc-php/cc.inc
+
 /usr/sbin/apache2ctl -D FOREGROUND
 

@@ -20,7 +20,13 @@ git clone site module, copy contents(modules, themes and .git folder) to a fresh
 
 cd /var/www/yoursite/sites/all && git submodule init && git submodule update
 
-Login to your drupal site as administraitor, visit the admin->modules menu, enable all checkoutcrypto modules except for Hosting(under development), Send payment by email(under development), cgPopup (a ctools example module, created by me for developers to see a working code for a vanilla ctools modal popup). 
+Login to your drupal site as administraitor, visit the admin->modules menu, enable all checkoutcrypto modules except for Hosting(under development), Send payment by email(under development), cgPopup (a ctools example module, created by me for developers to see a working code for a vanilla ctools modal popup). You need to modify the ccAccount module's [API connection](https://github.com/CheckoutCrypto/site/blob/master/modules/CheckoutCrypto/ccAccount/includes/cc-php/cc.inc) (it's done automatically in docker build, not git).
+
+```
+$base_url = '';
+```
+
+to your own API host's IP address.
 
 1. You need to add all coins to the ccdev_coins table. Add their rpc info to offline worker cache menu, afterwords(worker option 2).
 2. You need to add a "default" type group to the ccdev_groups table.
@@ -46,16 +52,23 @@ Run PHPMyAdmin daemon container with mysql connection(exposed port 80 mapped to 
 ```
 docker run -d --link mysql:mysql -e MYSQL_USERNAME=root --name phpmyadmin -p 81:80 corbinu/docker-phpmyadmin
 ```
+###CheckoutCrypto API Container
+
+Run CheckoutCrypto API Usage Server (exposed port 82)
+
+```
+docker run -d -it -p 82:80 --name api --link mysql:mysql checkoutcrypto/crypto-api
+```
 
 ###CheckoutCrypto Site Container
 
-* Option 1 Run CheckoutCrypto site daemon container with mysql  (exposed port 80 mapped to 82):
+* Option 1 Run CheckoutCrypto site container with mysql + api containers(above) linked.  (exposed port 83):
 
 ```
-sudo docker run -d -it --name cc-site --link mysql:mysql -p 81:80 checkoutcrypto/site
+sudo docker run -d -it --name site --link mysql:mysql --link api:api -p 83:80 checkoutcrypto/site
 ```
 
-Then simply access it from the container's public IP with port 80.  Change :82:80  e.g. hostport:containerport 
+Then simply access it from the container's public IP with port 80.  Change :83:80  e.g. hostport:containerport 
 
 * Option 2 Development
 
@@ -65,10 +78,10 @@ cd ./site
 docker build -t mytestsite .
 ```
 
-Finally you can run the docker, linked to the site with:
+Finally you can run the docker, linked to the site build with:
 
 ```
-docker run -d --link mysql:mysql -p 81:80 --name cc-site checkoutcrypto/site
+docker run -d -it --link mysql:mysql --link api:api -p 83:80 --name site mytestsite
 ```
 
 ####View/Install CheckoutCrypto Site
@@ -87,17 +100,17 @@ docker run -it checkoutcrypto/site /bin/bash
 Access a currently running checkoutcrypto/site container
 
 ```
-docker exec -it cc-site /bin/bash
+docker exec -it site /bin/bash
 ```
 
 Site files located at /var/www/html/site - includes all necessary modules, submodules and repositories.  
  
 ###Drupal installation
-Follow beginning at [Step 2](
-https://www.drupal.org/documentation/install/create-database), their is no mysql included in this package.
+Follow at [Step 4 of Drupal Install Guide](
+https://www.drupal.org/documentation/install/create-database), as settings.php is prefilled by site docker image.  All you need to do is visit http://localhost:81/site/install.php (or whichever port you selected), continue with the admin and site setup.
 
 ##CheckoutCrypto + Modules
-Assuming you followed all the instructions and initialized the source files, configured your database, the last thing you need to do (other than SSL and apache mod rewrite) is to enable the correct modules(Most of CheckoutCrypto, Ctools, Jquery_update, etc), theme(bootstrap) and finally, adjust the module blocks.
+The last steps(other than SSL and apache mod rewrite) are to: enable the correct modules(Most of CheckoutCrypto, Ctools, Jquery_update, etc), theme(bootstrap), adjust the module blocks.
 
 ##Post-installation
 1) enable all modules, fix configurations e.g. smtp, site config, theme settings, blocks, etc.
@@ -119,11 +132,6 @@ menu, afterwords(worker option 2).
 6) You need to select a user for use as a "hot wallet", you need to get that userid from the users table, copy it to the api configuration (api/config/ccapiconfig.php, within api repository).
 
 Thorough, site documentation, found in [./modules/CheckoutCrypto/docs/ccDocs.pdf](https://github.com/CheckoutCrypto/site/blob/master/modules/CheckoutCrypto/docs/ccDocs.pdf)
-
-###ccdev_coins table
-Get all the validation codes, by inserting any address here: 
-
-http://darkgamex.ch:2751/chain/Anoncoin/q/decode_address/PH4C5dGxdxKCN7Ru71Hn9yyj9SuxMATsh3
 
 ##API Docker
 See CheckoutCrypto [API repository](https://registry.hub.docker.com/u/checkoutcrypto/api/)

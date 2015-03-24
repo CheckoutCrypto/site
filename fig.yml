@@ -28,6 +28,7 @@ site:
     - "82:80"
   links:
     - mysql
+    - api
 phpmyadmin:
   image: corbinu/docker-phpmyadmin
   ports:
