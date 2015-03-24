@@ -41,13 +41,13 @@ Thorough, site documentation, found in ./modules/CheckoutCrypto/docs/ccDocs.pdf
 * CheckoutCrypto Worker [Dart ](https://registry.hub.docker.com/u/checkoutcrypto/worker-dart/)  [Qt](https://registry.hub.docker.com/u/checkoutcrypto/worker-qt/)
 
 ###Required DB Containers
-Run MySQL daemon container with mysql-server (pre-exposed port 3306)
+Run MySQL daemon container with mysql-server (exposed port 3306)
 
 ```
 docker run --name mysql -e MYSQL_ROOT_PASSWORD=somepass -d mysql
 ```
 
-Run PHPMyAdmin daemon container with mysql connection(exposed port 80 mapped to 81)
+Run PHPMyAdmin daemon container with mysql connection(exposed port 81)
 
 ```
 docker run -d --link mysql:mysql -e MYSQL_USERNAME=root --name phpmyadmin -p 81:80 corbinu/docker-phpmyadmin
@@ -107,7 +107,7 @@ Site files located at /var/www/html/site - includes all necessary modules, submo
  
 ###Drupal installation
 Follow at [Step 4 of Drupal Install Guide](
-https://www.drupal.org/documentation/install/create-database), as settings.php is prefilled by site docker image.  All you need to do is visit http://localhost:81/site/install.php (or whichever port you selected), continue with the admin and site setup.
+https://www.drupal.org/node/251031), as settings.php is prefilled by site docker image.  All you need to do is visit http://localhost:83/site/install.php (or whichever port you selected), continue with the admin and site setup.
 
 ##CheckoutCrypto + Modules
 The last steps(other than SSL and apache mod rewrite) are to: enable the correct modules(Most of CheckoutCrypto, Ctools, Jquery_update, etc), theme(bootstrap), adjust the module blocks.
@@ -134,7 +134,7 @@ menu, afterwords(worker option 2).
 Thorough, site documentation, found in [./modules/CheckoutCrypto/docs/ccDocs.pdf](https://github.com/CheckoutCrypto/site/blob/master/modules/CheckoutCrypto/docs/ccDocs.pdf)
 
 ##API Docker
-See CheckoutCrypto [API repository](https://registry.hub.docker.com/u/checkoutcrypto/api/)
+See CheckoutCrypto [API repository](https://registry.hub.docker.com/u/checkoutcrypto/crypto-api/)
 
 ###API Git 
 
