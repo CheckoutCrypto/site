@@ -1,5 +1,5 @@
-name = checkoutcrypto Accounts
-description = account entity with api generator
+name = CheckoutCrypto Accounts
+description = Create/Edit/View Accounts with api keys
 core = 7.x
 package = CheckoutCrypto
 dependencies[] = field

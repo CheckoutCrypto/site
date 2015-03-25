@@ -1,5 +1,5 @@
-name = checkoutcrypto Worker
-description = daemon Worker display.
+name = CheckoutCrypto Worker
+description = Base table for worker internal network cache of all site and api wide transactions
 core = 7.x
 package = CheckoutCrypto
 dependencies[] = field

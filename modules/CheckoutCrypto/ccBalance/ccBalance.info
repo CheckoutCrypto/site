@@ -1,5 +1,5 @@
-name = checkoutcrypto Balance
-description = add/edit/remove/list balances
+name = CheckoutCrypto Balances
+description = Add/list balances. Functionality for withdraw and autopayment
 core = 7.x
 package = CheckoutCrypto
 dependencies[] = field

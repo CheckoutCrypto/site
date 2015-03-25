@@ -1,5 +1,5 @@
 name = checkoutcrypto Hosting
-description = Hosting config and management
+description = Hosting Management(concept)
 core = 7.x
 package = CheckoutCrypto
 dependencies[] = field

@@ -1,5 +1,5 @@
 name = CheckoutCrypto OTP
-description = Genereate OTP for withdraw and autopay confirmation
+description = One-time password(OTP) generation and validation
 core = 7.x
 package = CheckoutCrypto
 dependencies[] = field

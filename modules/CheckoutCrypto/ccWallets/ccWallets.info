@@ -1,5 +1,5 @@
-name = checkoutcrypto Wallets
-description = A simple entity example showing the main steps required to set up your own entity.
+name = CheckoutCrypto Wallets
+description = Add/View Wallets from cryptocurrencies
 core = 7.x
 package = CheckoutCrypto
 dependencies[] = field

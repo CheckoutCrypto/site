@@ -1,7 +1,7 @@
-name = Coingateway Trading
-description = Coingateway trading front end.
+name = CheckoutCrypto Trading
+description = Site client to trade/autotrade via API. Includes a list of transactions and site block for making instant, trades, without signing up(requires host hot wallet to distribute funds)
 core = 7.x
-package = Coingateway
+package = CheckoutCrypto
 dependencies[] = field
 dependencies[] = ctools
 stylesheets[all][] = style1.css
@@ -11,5 +11,5 @@ configure = admin/structure/cgtrading_manage
 ; Information added by Drupal.org packaging script on 2014-03-09
 version = "7.x-1.x-dev"
 core = "7.x"
-project = "Coingateway"
+project = "CheckoutCrypto"
 datestamp = "1394327312"

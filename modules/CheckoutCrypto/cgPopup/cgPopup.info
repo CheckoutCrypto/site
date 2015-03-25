@@ -1,4 +1,4 @@
-name = Coingateway Popup
-package = Coingateway
-description = Coingateway Popup Tester
+name = CheckoutCrypto Popup
+package = CheckoutCrypto
+description = An example popup module, created by CheckoutCrypto for developers.
 core = 7.x

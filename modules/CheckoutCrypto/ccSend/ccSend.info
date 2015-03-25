@@ -1,5 +1,5 @@
-name = checkoutcrypto Send Payment by Email
-description = send any hosted cryptocoin to any email address
+name = CheckoutCrypto Email Payment
+description = Send any hosted cryptocoin to any email address(concept)
 core = 7.x
 package = CheckoutCrypto
 dependencies[] = field

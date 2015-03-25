@@ -1,5 +1,5 @@
-name = checkoutcrypto Coins
-description = add/edit/remove/list coins
+name = CheckoutCrypto Coins
+description = Add/edit/remove/list Cryptocurrency coins
 core = 7.x
 package = CheckoutCrypto
 dependencies[] = field

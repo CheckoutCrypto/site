@@ -1,4 +1,4 @@
-name = checkoutcrypto Group Pricing
+name = CheckoutCrypto Groups
 description = account entity with api generator
 core = 7.x
 package = CheckoutCrypto

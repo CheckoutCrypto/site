@@ -1,5 +1,5 @@
-name = checkoutcrypto Transactions
-description = transaction entity
+name = CheckoutCrypto Transactions
+description = Add/View Transactions from withdraws
 core = 7.x
 package = CheckoutCrypto
 dependencies[] = field

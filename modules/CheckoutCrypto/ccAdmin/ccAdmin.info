@@ -1,5 +1,5 @@
-name = checkoutcrypto admin
-description = A library of tools for CheckoutCrypto
+name = CheckoutCrypto Admin
+description = library of Admin tools for API Control
 core = 7.x
 package = CheckoutCrypto
 configure = admin/structure/ccdev_admin/manage
