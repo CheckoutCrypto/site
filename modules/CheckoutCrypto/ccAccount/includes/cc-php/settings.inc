@@ -101,6 +101,13 @@ function account_menu(){
     'page callback' => 'ccAccount_info_page',
     'access arguments' => array('view any ccdev_accounts entity'),
  	'menu_name' => 'main-menu',
+ 	'weight' => 1,
+  );
+  $items['Account/Overview'] = array(
+    'title' => 'Account',
+    'page callback' => 'ccAccount_info_page',
+    'access arguments' => array('view any ccdev_accounts entity'),
+ 	'weight' => 0,
   );
   $items['Account/Billing'] = array(
     'title' => 'Billing',
@@ -111,6 +118,7 @@ function account_menu(){
     'title' => 'Dashboard',
     'page callback' => 'ccAccount_summary_page',
     'access arguments' => array('view any ccdev_accounts entity'),
+ 	'weight' => 1,
   );
 
   // This provides a place for Field API to hang its own

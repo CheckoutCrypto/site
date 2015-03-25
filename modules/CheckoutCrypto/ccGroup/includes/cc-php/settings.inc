@@ -89,7 +89,7 @@ function group_info(){
 function group_menu(){
      module_load_include('inc', 'ccGroup', 'includes/cc-php/entity');
      module_load_include('inc', 'ccGroup', 'includes/cc-php/entity_load');
- $items['ccMods/ccGroup'] = array(
+ $items['admin/Groups'] = array(
     'title' => 'Groups',
     'page callback' => 'ccGroup_info_page',
     'access arguments' => array('view any ccdev_groups entity'),
@@ -113,7 +113,7 @@ function group_menu(){
     'type' => MENU_DEFAULT_LOCAL_TASK,
   );
 
-  $items['ccMods/ccGroup/basic/%ccdev_groups'] = array(
+  $items['admin/Groups/basic/%ccdev_groups'] = array(
     'title callback' => 'ccdev_groups_title',
     'title arguments' => array(3),
     'page callback' => 'ccdev_groups_view',
@@ -121,13 +121,13 @@ function group_menu(){
     'access arguments' => array('view any ccdev_groups entity'),
   );
 
-  $items['ccMods/ccGroup/basic/%ccdev_groups/view'] = array(
+  $items['admin/Groups/basic/%ccdev_groups/view'] = array(
     'title' => 'View',
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => -10,
   );
 
-  $items['ccMods/ccGroup/basic/%ccdev_groups/edit'] = array(
+  $items['admin/Groups/basic/%ccdev_groups/edit'] = array(
     'title' => 'Edit',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ccdev_groups_form', 3),
@@ -142,7 +142,7 @@ function group_menu(){
     'type' => MENU_CALLBACK,
   );
 
-  $items['ccMods/ccGroup/basic/add'] = array(
+  $items['admin/Groups/basic/add'] = array(
     'title' => 'Add new Group',
     'page callback' => 'ccdev_groups_add',
     'access arguments' => array('create ccdev_groups entities'),

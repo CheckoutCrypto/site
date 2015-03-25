@@ -25,6 +25,7 @@ function trans_menu(){
     'page callback' => 'ccTrans_info_page',
     'access arguments' => array('view any ccdev_transactions entity'),
 	'menu_name' => 'main-menu',
+	'weight' => 5,
   );
 
   // This provides a place for Field API to hang its own

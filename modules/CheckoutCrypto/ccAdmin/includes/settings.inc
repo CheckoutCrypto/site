@@ -50,7 +50,7 @@ function admin_info(){
 }
 
 function admin_menu(){
-  $items['ccAdmin'] = array(
+  $items['admin/APIAdmin'] = array(
     'title' => 'Admin',
     'page callback' => 'ccAdmin_info_page',
     'access arguments' => array('view any ccdev_admin entity'),
@@ -82,7 +82,7 @@ function admin_menu(){
   // The page to view our entities - needs to follow what
   // is defined in basic_uri and will use load_basic to retrieve
   // the necessary entity info.
-  $items['ccAdmin/basic/%ccdev_admin'] = array(
+  $items['admin/APIAdmin/basic/%ccdev_admin'] = array(
     'title callback' => 'ccdev_admin_title',
     'title arguments' => array(3),
     'page callback' => 'ccdev_admin_view',
@@ -91,14 +91,14 @@ function admin_menu(){
   );
 
   // 'View' tab for an individual entity page.
-  $items['ccAdmin/basic/%ccdev_admin/view'] = array(
+  $items['admin/APIAdmin/basic/%ccdev_admin/view'] = array(
     'title' => 'View',
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => -10,
   );
 
   // 'Edit' tab for an individual entity page.
-  $items['ccAdmin/basic/%ccdev_admin/edit'] = array(
+  $items['admin/APIAdmin/basic/%ccdev_admin/edit'] = array(
     'title' => 'Edit',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ccdev_admin_form', 3),
@@ -107,7 +107,7 @@ function admin_menu(){
   );
 
   // Add example entities.
-  $items['ccAdmin/basic/add'] = array(
+  $items['admin/APIAdmin/basic/add'] = array(
     'title' => 'some page',
     'page callback' => 'ccdev_admin_add',
     'access arguments' => array('create ccdev_admin entities'),

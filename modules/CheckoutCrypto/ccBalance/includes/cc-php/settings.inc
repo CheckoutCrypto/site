@@ -44,11 +44,12 @@ function balance_info(){
 
 function balance_menu(){
     module_load_include('inc', 'ccBalance', 'includes/cc-php/entity');
-$items['Balance'] = array(
+$items['Account/Balance'] = array(
     'title' => 'Balance',
     'page callback' => 'ccBalance_info_page',
     'access arguments' => array('view any ccdev_balance entity'),
-    'menu_name' => 'navigation', // You'll need to have a menu named
+    'menu_name' => 'main-menu', // You'll need to have a menu named
+ 	'weight' => 2,
   );
 
   $items['admin/structure/ccdev_balance/manage'] = array(

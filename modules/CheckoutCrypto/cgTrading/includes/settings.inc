@@ -104,6 +104,7 @@ $items['Trading'] = array(
     'page callback' => 'cgTrading_info_page',
     'access arguments' => array('view any ccdev_trades entity'),
     'menu_name' => 'main-menu',
+ 	'weight' => 3,
   );
   $items['Trading/transactions'] = array(
     'title' => 'Transactions',

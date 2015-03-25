@@ -84,6 +84,7 @@ $items['Coin'] = array(
     'page callback' => 'ccCoin_info_page',
     'access arguments' => array('view any ccdev_coin entity'),
 	'menu_name' => 'main-menu',
+ 	'weight' => 2,
   );
 
   $items['admin/structure/ccdev_coin/manage'] = array(

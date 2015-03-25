@@ -67,6 +67,7 @@ function wallets_menu(){
     'page callback' => 'ccWallets_info_page',
     'access arguments' => array('view any ccdev_wallets entity'),
 	'menu_name' => 'main-menu',
+ 	'weight' => 4,
   );
 
   $items['admin/structure/ccdev_wallets/manage'] = array(

@@ -41,10 +41,7 @@ background: #2E363D;
 color: white;
 padding: 20px;
 text-align: left;
-}
-
-.test_head {
-background-image: url('https://coingateway.net/downloads/images/contents/transact.png');
+border-top:0px;
 }
 
 
