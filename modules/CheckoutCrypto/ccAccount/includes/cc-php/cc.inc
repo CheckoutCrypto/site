@@ -1,6 +1,6 @@
 <?php
 
-class CoingatewayAPI {
+class CheckoutCryptoAPI {
 
   public function __construct() {
     //construct
@@ -13,7 +13,7 @@ class CoingatewayAPI {
         $apikey = $params['apikey'];
     }
 
-   $base_url = 'http://127.0.0.1/api/api.php';   /// API domain
+    $base_url= "http://127.0.0.1/api.php";
     $arguments = '?apikey='.$apikey;
 
     switch ($action) {

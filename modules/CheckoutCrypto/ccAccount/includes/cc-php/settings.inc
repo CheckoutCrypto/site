@@ -100,6 +100,7 @@ function account_menu(){
     'title' => 'Account',
     'page callback' => 'ccAccount_info_page',
     'access arguments' => array('view any ccdev_accounts entity'),
+ 	'menu_name' => 'main-menu',
   );
   $items['Account/Billing'] = array(
     'title' => 'Billing',
