@@ -1,8 +1,8 @@
 <?php
 
 /**
- * Coingateway Trading Module - default trading module
- * Copyright 2014 Coingateway
+ * CheckoutCrypto Trading Module - default trading module
+ * Copyright 2014 CheckoutCrypto
  */
 function cgTrading_preprocess(&$variables, $hook) {
 	  module_load_include('inc','cgTrading','includes/settings');
