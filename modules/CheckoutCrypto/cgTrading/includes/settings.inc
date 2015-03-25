@@ -103,7 +103,7 @@ $items['Trading'] = array(
     'title' => 'Trading',
     'page callback' => 'cgTrading_info_page',
     'access arguments' => array('view any ccdev_trades entity'),
-    'menu_name' => 'navigation', // You'll need to have a menu named
+    'menu_name' => 'main-menu',
   );
   $items['Trading/transactions'] = array(
     'title' => 'Transactions',

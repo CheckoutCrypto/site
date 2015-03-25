@@ -20,11 +20,11 @@ function trans_permissions(){
 
 function trans_menu(){
 	module_load_include('inc', 'ccTrans', 'includes/cc-php/entity');
-  $items['Transactions'] = array(
+  $items['Account/Transactions'] = array(
     'title' => 'Transactions',
     'page callback' => 'ccTrans_info_page',
     'access arguments' => array('view any ccdev_transactions entity'),
-    'menu_name' => 'navigation', // You'll need to have a menu named
+	'menu_name' => 'main-menu',
   );
 
   // This provides a place for Field API to hang its own

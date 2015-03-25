@@ -62,10 +62,11 @@ function wallets_permissions(){
 
 function wallets_menu(){
 	module_load_include('inc', 'ccCoin', 'includes/entity');
- $items['Wallets'] = array(
+ $items['Account/Wallets'] = array(
     'title' => 'Wallets',
     'page callback' => 'ccWallets_info_page',
     'access arguments' => array('view any ccdev_wallets entity'),
+	'menu_name' => 'main-menu',
   );
 
   $items['admin/structure/ccdev_wallets/manage'] = array(
