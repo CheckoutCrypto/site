@@ -1,6 +1,14 @@
 
-#miniboxtitle {
+.navbar {
+background-color: #144576;
+}
 
+.navbar-inverse .navbar-brand {
+color: white;
+}
+
+.navbar-inverse .navbar-nav > li > a {
+color: white;
 }
 
 #but_withdraw {
@@ -34,3 +42,4 @@ border-radius: 0px 0px 2px 2px;
 #dash_box_inner {
 	background-color:lightgray;
 }
+

@@ -1,0 +1,319 @@
+<?php
+
+/**
+ * Coingateway Trading Module - default trading module
+ * Copyright 2014 Coingateway
+ */
+function cgTrading_preprocess(&$variables, $hook) {
+	  module_load_include('inc','cgTrading','includes/settings');
+		trading_theme($variables, $hook);
+}
+
+function trade_process($form, $form_state){
+  module_load_include('inc','cgTrading','includes/service');
+ timer_form($form, $form_state);
+}
+
+
+function popupTheme_callback($popup, &$form_state){
+	return "<div id='test-ajax'>Wrapper Div</div>";
+}
+
+
+/* remove titles from form elements */
+
+function cgTrading_trading_form_alter(&$form, &$form_state, $form_id) {
+  // Check the form_id
+  if ($form_id == 'trading-form') {
+    // To hide the label
+    $form['coin_address']['#title_display'] = 'invisible';
+    // To alter the label
+    $form['coin_amt']['#title'] = t('Your new title');
+  }
+}
+
+function trade_address_validate($element, $form_state){
+	///  module_load_include('inc','cgTrading','includes/callback');
+	$allowed = array('BTC', 'POT');
+  if ($form_state['values']['coin_code'] != "BTC") {
+    form_set_error($element, t('You mus enter a valid address.'));
+  }
+// 	trade_validate();
+}
+
+/*
+*  Submit Trading Form
+*/
+function trade_form_submit($form, &$form_state){
+	  module_load_include('inc','cgTrading','includes/callback');
+	trade_submit($form, $form_state);
+}
+
+/**
+ * Declare what blocks are provided by this module.
+ * Implements hook_block_info().
+ */
+function cgTrading_block_info(){
+  module_load_include('inc','cgTrading','includes/block');
+	return trading_block_info();
+}
+
+/**
+ * Define what our block is going to look like.
+ * Implements hook_block_view().
+ */
+function cgTrading_block_view($block_key){
+  module_load_include('inc','cgTrading','includes/block');
+	return trading_block_view($block_key);
+}
+
+/*
+* Define where our block is going to be placed
+* Implements hook_block_info_alter()
+*/
+function cgTrading_block_info_alter(&$blocks, $theme, $code_blocks) {
+  module_load_include('inc','cgTrading','includes/block');
+	return trading_block_setup($blocks, $theme, $code_blocks);
+}
+
+/**
+ * Implements hook_entity_info().
+ */
+function cgTrading_entity_info() {
+  module_load_include('inc','cgTrading','includes/settings');
+  return trading_info();
+}
+
+/**
+ * Fetch a basic object.
+ */
+function ccdev_trades_load($basic_id = NULL, $reset = FALSE) {
+  $basic_ids = (isset($basic_id) ? array($basic_id) : array());
+  $basic = ccdev_trades_load_multiple($basic_ids, array(), $reset);
+  return $basic ? reset($basic) : FALSE;
+}
+
+/**
+ * Loads multiple basic entities.
+ */
+function ccdev_trades_load_multiple($basic_ids = FALSE, $conditions = array(), $reset = FALSE) {
+  return entity_load('ccdev_trades', $basic_ids, $conditions, $reset);
+}
+
+/**
+ * Implements the uri callback.
+ */
+function ccdev_trades_uri($basic) {
+  return array(
+    'path' => 'Trades/basic/' . $basic->basic_id,
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function cgTrading_menu() {
+  module_load_include('inc','cgTrading','includes/settings');
+  return trading_menu();
+}
+
+/**
+ * Basic information for the page.
+ */
+function cgTrading_info_page() {
+  module_load_include('inc','cgTrading','includes/page');
+	return trading_page();
+}
+
+/**
+ * Basic information for the page.
+ */
+function cgTrading_complete_page($coin,$address) {
+  module_load_include('inc','cgTrading','includes/page');
+	return trading_complete($coin, $address);
+}
+
+/**
+ * Basic information for the page.
+ */
+function cgTrading_trans_page() {
+  module_load_include('inc','cgTrading','includes/page');
+	return trading_transactions();
+}
+
+/**
+ * Implements hook_permission().
+ */
+function cgTrading_permission() {
+  module_load_include('inc','cgTrading','includes/settings');
+	return trading_permissions();
+}
+
+/**
+ * Callback for a page title when this entity is displayed.
+ */
+function ccdev_trades_title($entity) {
+  return t('Trading API');
+}
+
+/**
+ * Menu callback to display an entity.
+ */
+function ccdev_trades_view($entity, $view_mode = 'tweaky') {
+  // Our entity type, for convenience.
+  $entity_type = 'ccdev_work_
+
+orders';
+  // Start setting up the content.
+  $entity->content = array(
+    '#view_mode' => $view_mode,
+  );
+  field_attach_prepare_view($entity_type, array($entity->basic_id => $entity),
+    $view_mode);
+  entity_prepare_view($entity_type, array($entity->basic_id => $entity));
+  // Now field_attach_view() generates the content for the fields.
+  $entity->content += field_attach_view($entity_type, $entity, $view_mode);
+
+  global $language;
+  $langcode = $language->language;
+  // And now invoke hook_entity_view().
+  module_invoke_all('entity_view', $entity, $entity_type, $view_mode,
+    $langcode);
+  // Now invoke hook_entity_view_alter().
+  drupal_alter(array('ccdev_trades_view', 'entity_view'),
+    $entity->content, $entity_type);
+
+  return $entity->content;
+}
+
+
+/**
+ * Provides a wrapper on the edit form to add a new entity.
+ */
+function ccdev_trades_add() {
+  $entity = entity_get_controller('ccdev_trades')->create();
+  return drupal_get_form('ccdev_trades_form', $entity);
+}
+
+/**
+ * Form deletion handler.
+ */
+function ccdev_trades_edit_delete($form, &$form_state) {
+  $entity = $form_state['values']['basic_entity'];
+  ccdev_trades_delete($entity);
+  drupal_set_message(t('The entity %item_description (ID %id) has been deleted',
+    array('%item_description' => $entity->item_description, '%id' => $entity->basic_id))
+  );
+  $form_state['redirect'] = 'examples/cgTrading';
+}
+
+/**
+ * We save the entity by calling the controller.
+ */
+function ccdev_trades_save(&$entity) {
+  return entity_get_controller('ccdev_trades')->save($entity);
+}
+
+/**
+ * Use the controller to delete the entity.
+ */
+function ccdev_trades_delete($entity) {
+  entity_get_controller('ccdev_trades')->delete($entity);
+}
+
+/**
+ * EntityExampleBasicControllerInterface definition.
+ */
+interface cgTradingBasicControllerInterface
+  extends DrupalEntityControllerInterface {
+
+  /**
+   * Create an entity.
+   */
+  public function create();
+  public function save($entity);
+  public function delete($entity);
+
+}
+
+/**
+ * EntityExampleBasicController extends DrupalDefaultEntityController.
+ */
+class cgTradingBasicController
+  extends DrupalDefaultEntityController
+  implements cgTradingBasicControllerInterface {
+
+  /**
+   * Create and return a new ccdev_trades entity.
+   */
+  public function create() {
+    $entity = new stdClass();
+    $entity->type = 'ccdev_trades';
+    $entity->basic_id = 0;
+    $entity->bundle_type = 'trades_bundle';
+    return $entity;
+  }
+
+  /**
+   * Saves the custom fields using drupal_write_record().
+   */
+  public function save($entity) {
+    if (empty($entity->basic_id)) {
+     // $entity->timestamp = time();
+    }
+    module_invoke_all('entity_presave', $entity, 'ccdev_trades');
+    $primary_keys = $entity->basic_id ? 'basic_id' : array();
+    // Write out the entity record.
+    drupal_write_record('ccdev_trades', $entity, $primary_keys);
+    // and change it if we need to.
+    $invocation = 'entity_insert';
+    if (empty($primary_keys)) {
+      field_attach_insert('ccdev_trades', $entity);
+    }
+    else {
+      field_attach_update('ccdev_trades', $entity);
+      $invocation = 'entity_update';
+    }
+    // Invoke either hook_entity_update() or hook_entity_insert().
+    module_invoke_all($invocation, $entity, 'ccdev_trades');
+    return $entity;
+  }
+
+  /**
+   * Delete a single entity.
+   */
+  public function delete($entity) {
+    $this->deleteMultiple(array($entity));
+  }
+
+  /**
+   * Delete one or more ccdev_trades entities.
+   */
+  public function deleteMultiple($entities) {
+    $basic_ids = array();
+    if (!empty($entities)) {
+      $transaction = db_transaction();
+      try {
+        foreach ($entities as $entity) {
+          // Invoke hook_entity_delete().
+          module_invoke_all('entity_delete', $entity, 'ccdev_trades');
+          field_attach_delete('ccdev_trades', $entity);
+          $basic_ids[] = $entity->basic_id;
+        }
+        db_delete('ccdev_trades')
+          ->condition('basic_id', $basic_ids, 'IN')
+          ->execute();
+      }
+      catch (Exception $e) {
+        $transaction->rollback();
+        watchdog_exception('cgTrading', $e);
+        throw $e;
+      }
+    }
+  }
+}
+
+/**
+ * @} End of "defgroup ccWorker".
+ */
+

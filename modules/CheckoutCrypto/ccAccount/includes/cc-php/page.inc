@@ -5,7 +5,7 @@ function account_info_page(){
    $totBalance = 0; 
    $verify = 0; 
    $defCoin = "BTC"; 
-    $apiKey = "";
+    $apiKey = "none";
  	global $user;
   	module_load_include('inc','ccAccount','includes/cc-php/lib');
 	drupal_add_js(drupal_get_path('module', 'ccAccount') .'/theme/dash_func.js');
@@ -22,11 +22,11 @@ function account_info_page(){
 	$account = getAllAccountInfo($user->uid);
 	$billing = getBillingSummary($user->uid);
 
-	if(isset($billing['total_trans'])){
+	if(isset($billing['total_balance'])){
 		$numTrans = $billing['total_trans'];
 		$totBalance = $billing['total_balance'];
 	}
-	if(isset($account['total_balance'])){
+	if(isset($account['api_key'])){
 		$verify = $account['verified'];
 		$defCoin = $account['default_coin'];
 		$apiKey = $account['api_key'];
