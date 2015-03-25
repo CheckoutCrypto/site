@@ -62,10 +62,16 @@ Finally, run the command above again, this time, go to option 3, to Generate an 
 docker exec -it api vi /var/www/html/config/ccapiconfig.php
 ```
 
-Change:
+Insert your worker's API key:
 ```
 $apikey = "";
 ```
+
+and your worker's IP
+```
+$workerserver = '';
+```
+
 
 ##Run the CheckoutCrypto Worker Server
 

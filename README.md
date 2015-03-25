@@ -178,5 +178,5 @@ add rpcallowip=10.0.0.1 or w.e your ip
 Get all the validation codes, for the ccdev_coins table, by inserting any address [here](http://darkgamex.ch:2751/chain/Anoncoin/q/decode_address/PH4C5dGxdxKCN7Ru71Hn9yyj9SuxMATsh3)
 
 ##License
-[Licensed under GPLv3](https://github.com/CheckoutCrypto/site/blob/master/COPYRIGHT) with one small reservation.
+[Licensed under the Apache License](https://github.com/CheckoutCrypto/site/blob/master/COPYRIGHT) with one small reservation.
 
