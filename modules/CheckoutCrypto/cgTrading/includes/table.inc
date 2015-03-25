@@ -3,12 +3,11 @@
 function getTradeTable(){
 		module_load_include('inc', 'ccCoin', 'includes/cc-php/lib');
 	$header = array(
-		array('data' => t('Amount'), 'field' => 'amount_to', 'id' => 'tabhead'),   // https://coingateway.net/downloads/images/contents/input.png 
-		array('data' => 'TXID', 'field' => 'TXID', 'id' => 'tabhead',),  /// <img src="https://coingateway.net/downloads/images/contents/transact.png" />
-		array('data' => 'Date', 'field' => 'timestamp',  'sort' => 'desc', 'id' => 'tabhead',),  /// <img src="https://coingateway.net/downloads/images/contents/clock.png" />
+		array('data' => t('Amount'), 'field' => 'amount_to', 'id' => 'tabhead'),  
+		array('data' => 'TXID', 'field' => 'TXID', 'id' => 'tabhead',),  
+		array('data' => 'Date', 'field' => 'timestamp',  'sort' => 'desc', 'id' => 'tabhead',),  
 
 );
-	// $header = validateSort($head_item, $sort);
 $result = db_select('ccdev_trades')
 		->extend('PagerDefault')
 		 ->extend('TableSort');

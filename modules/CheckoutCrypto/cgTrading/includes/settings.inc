@@ -111,6 +111,7 @@ $items['Trading'] = array(
     'page callback' => 'cgTrading_trans_page',
     'access arguments' => array('view any ccdev_trades entity'),
     'menu_name' => 'main-menu', // You'll need to have a menu named
+	'weight' => 4,
   );
   $items['Trading/complete/%/%'] = array(
     'title' => 'Trade Completed',

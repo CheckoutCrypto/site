@@ -1,11 +1,12 @@
 <?php
 
 function trading_page(){
+global $base_path;
 		//slick
-		drupal_add_css($path.'/includes/slick/slick.css');
-		drupal_add_js($path.'/includes/slick/jquery-1.11.0.min.js');
-		drupal_add_js($path.'/includes/slick/jquery-migrate-1.2.1.min.js');
-		drupal_add_js($path.'/includes/slick/slick.min.js');
+		drupal_add_css($base_path.'/includes/slick/slick.css');
+		drupal_add_js($base_path.'/includes/slick/jquery-1.11.0.min.js');
+		drupal_add_js($base_path.'/includes/slick/jquery-migrate-1.2.1.min.js');
+		drupal_add_js($base_path.'/includes/slick/slick.min.js');
 		//end slick
   if (user_access('administer ccdev_work_orders entities')) {
     $content['preface']['#markup'] = t('You can administer these and add fields and change the view !link.',

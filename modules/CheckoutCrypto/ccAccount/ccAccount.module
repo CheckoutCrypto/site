@@ -6,6 +6,12 @@
 
 error_reporting(~0); ini_set('display_errors', 1);
 
+/*
+* Implements hook_init()
+*/
+function ccAccount_init(){
+	ccAccount_setDefaultTheme();
+}
 
 /*
 *  Give register use a default api key, OTP + coin(e.g. BTC wallet)
@@ -43,6 +49,13 @@ function ccAccount_user_register_form_submit(&$form, &$form_state){
 				$address = ccApiStatus($result['queue_id'], 'BTC');
 				/// do anything with address i.e. use for alternative coin storage
 		}	
+}
+/*
+*  Change the default site theme to CheckoutCrypto - 
+*  Note, you should comment this function out of if you want to try something different
+*/
+function ccAccount_setDefaultTheme(){
+	variable_set('theme_default', 'CheckoutCrypto');
 }
 
 /**

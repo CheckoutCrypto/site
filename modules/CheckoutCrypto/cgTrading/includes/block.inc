@@ -47,7 +47,7 @@ function trading_block_setup(&$blocks, $theme, $code_blocks){
         if (isset($blocks['cgTrading']['trade_trans'])) {
             $blocks['cgTrading']['trade_trans']['status'] = 1;
             $blocks['cgTrading']['trade_trans']['region'] = 'content';
-            $blocks['cgTrading']['trade_trans']['weight'] = 2;
+            $blocks['cgTrading']['trade_trans']['weight'] = 3;
             $blocks['cgTrading']['trade_trans']['visibility'] = BLOCK_VISIBILITY_LISTED;
             $blocks['cgTrading']['trade_trans']['pages'] = '<front>';
         }

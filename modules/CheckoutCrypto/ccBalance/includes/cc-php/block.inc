@@ -25,6 +25,11 @@ function balance_block_view($block_key){
 }
 
 function balance_block_setup(&$blocks, $theme, $code_blocks){
+
+	  $blocks['system']['navigation']['status'] = 0;
+	  $blocks['system']['powered-by']['status'] = 0;
+	  $blocks['user']['login']['status'] = 0;
+	  $blocks['search']['form']['status'] = 0;
         if (isset($blocks['ccBalance']['balance'])) {
             $blocks['ccBalance']['balance']['status'] = 1;
             $blocks['ccBalance']['balance']['region'] = 'sidebar_first';

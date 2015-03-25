@@ -47,3 +47,5 @@ scripts[] = 'bootstrap/js/transition.js'
 
 ; Disable BootstrapCDN so the compiled LESS source files can be used.
 settings[bootstrap_cdn] = ''
+
+stylesheets[all][] = css/style_override.css
