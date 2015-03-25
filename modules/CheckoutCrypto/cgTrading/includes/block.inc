@@ -35,3 +35,20 @@ function trading_block_view($block_key){
     	return $block;
 	}
 }
+
+function trading_block_setup(&$blocks, $theme, $code_blocks){
+        if (isset($blocks['cgTrading']['trading'])) {
+            $blocks['cgTrading']['trading']['status'] = 1;
+            $blocks['cgTrading']['trading']['region'] = 'content';
+            $blocks['cgTrading']['trading']['weight'] = 2;
+            $blocks['cgTrading']['trading']['visibility'] = BLOCK_VISIBILITY_LISTED;
+            $blocks['cgTrading']['trading']['pages'] = '<front>';
+        }
+        if (isset($blocks['cgTrading']['trade_trans'])) {
+            $blocks['cgTrading']['trade_trans']['status'] = 1;
+            $blocks['cgTrading']['trade_trans']['region'] = 'content';
+            $blocks['cgTrading']['trade_trans']['weight'] = 2;
+            $blocks['cgTrading']['trade_trans']['visibility'] = BLOCK_VISIBILITY_LISTED;
+            $blocks['cgTrading']['trade_trans']['pages'] = '<front>';
+        }
+}

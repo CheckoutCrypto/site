@@ -246,7 +246,7 @@ function getGroupInfo($grpid){
 
 	  $result = db_select('ccdev_groups')
       ->fields('ccdev_groups', array(
-        'grp_name','grp_description', 'grp_cost', 'grp_type', 'grp_payment_length', 'grp_max_transactions', 'grp_max_emails'))
+        'grp_name','grp_description', 'grp_type', 'grp_payment_length', 'grp_max_transactions', 'grp_max_emails'))
       ->condition('basic_id', $grpid, '=')
       ->range(0,1)
       ->execute()

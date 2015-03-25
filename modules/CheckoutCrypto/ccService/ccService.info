@@ -1,5 +1,5 @@
 name = CheckoutCrypto Service
-description = Accept altcoin monthly service charges(concept) as an alternative method of payment
+description = Accept altcoin monthly service charges as an alternative method of payment. 
 core = 7.x
 package = CheckoutCrypto
 dependencies[] = field

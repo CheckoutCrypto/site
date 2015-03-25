@@ -8,8 +8,6 @@ function displayTradeContainer(){
 	 $form['container_wrap_open'] = array('#markup' => t('<div class="container">'));
 	/// container Title and description
 	 $form['container_title'] = array('#markup' => t('<div id="headText" class="test55" style="margin-top:-10px;">
-                <h2 id="hometext2" style="font-size: 23px;  margin-top: 50px;  text-align: center;  font-weight: 400; color: white;">BUY &amp; SPEND BITCOIN &amp; ALTCOINS INSTANTLY<b style="color: rgb(255, 185, 34);font-weight: 700;"> NO ACCOUNT NEEDED</b><b style="color: rgb(135, 224, 64);font-weight: 700;"> LOW 0.5% FEE</b></h2>
-                <h3 id="parahome" style="font-size: 13px;  line-height: 20px;  text-align: center;  font-weight: 400;  color: white !important;">COINGATEWAY ACTS AS A BRIDGE TO ENABLE YOU TO PURCHASE MERCHANDISE FROM RETAILERS WHO ACCEPT ONLY BITCOIN, WITH OUR RANGE OF SUPPORTED ALTERNATE COINS! CHOOSE THE COIN YOU WOULD LIKE TO SPEND, THEN SIMPLY ENTER THE RECIPIENTS BITCOIN ADDRESS AND DESIRED AMOUNT AND CLICK "PAY NOW". WE ALSO SUPPORT A MULTI CRYPTO EXCHANGE PLATFORM WHERE YOU CAN CROSS TRADE ANY COIN LISTED IN THE OPTIONS. <b id="exchangetx">JUST CLICK THE "EXCHANGE" TAB BELOW!</b></h3>
             </div>'));
 	/// Buttons merchant options
 	 $form['container_options'] = array('#markup' => t('<a type="button" class="btn btn-success getcoins" id="home_button" href="#" style="display:none;    
