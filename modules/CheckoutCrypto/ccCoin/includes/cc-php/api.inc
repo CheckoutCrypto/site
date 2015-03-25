@@ -7,7 +7,7 @@ function ccGetInitAddress($userid, $coin) {
 	$accountdata = array();
 	 $accountdata = getUserApiKey();
 	$apikey  = $accountdata['api_key'];
-    $ccApi = new CoingatewayAPI($apikey);
+    $ccApi = new CheckoutCryptoAPI($apikey);
     $response = $ccApi->query(array('action' => 'getnewaddress','apikey' => $apikey, 'coin' => $coin));
     return $response;
 } 
@@ -18,7 +18,7 @@ function ccGetAddress($coin) {
 	$accountdata = array();
 	 $accountdata = getUserApiKey();
 	$apikey  = $accountdata['api_key'];
-    $ccApi = new CoingatewayAPI($apikey);
+    $ccApi = new CheckoutCryptoAPI($apikey);
     $response = $ccApi->query(array('action' => 'getnewaddress','apikey' => $apikey, 'coin' => $coin));
     return $response;
 } 
@@ -29,7 +29,7 @@ function ccApiStatus($queue_id, $coin) {
 	 $accountdata = getUserApiKey();
 	$apikey  = $accountdata['api_key'];
     try {
-        $ccApi = new CoingatewayAPI();
+        $ccApi = new CheckoutCryptoAPI();
         $response = $ccApi->query(array('action' => 'getstatus','apikey' => $apikey, 'orderid' => $queue_id, 'coin' => $coin));
     } catch (exception $e) {
         watchdog('ccApiStatus', 'API query for status failed: !fault', $e->getMessage());
@@ -60,7 +60,7 @@ function ccRefreshRequest() {
 	$accountdata = array();
 	 $accountdata = getServerApiKey("rate");
 	$apikey  = $accountdata['api_key'];
-    $ccApi = new CoingatewayAPI($apikey);
+    $ccApi = new CheckoutCryptoAPI($apikey);
     $response = $ccApi->query(array('action' => 'refreshworker', 'type' => 'coins', 'apikey' => $apikey));
     return $response;
 } 

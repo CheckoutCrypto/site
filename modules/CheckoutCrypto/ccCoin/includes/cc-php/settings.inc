@@ -83,6 +83,7 @@ $items['Coin'] = array(
     'title' => 'Coins',
     'page callback' => 'ccCoin_info_page',
     'access arguments' => array('view any ccdev_coin entity'),
+	'menu_name' => 'main-menu',
   );
 
   $items['admin/structure/ccdev_coin/manage'] = array(
@@ -98,14 +99,6 @@ $items['Coin'] = array(
     'access arguments' => array('create ccdev_coin entities'),
     'type' => MENU_LOCAL_ACTION,
   );
-
-  // Add example entities.
- /* $items['admin/structure/ccdev_fiat/manage/add'] = array(
-    'title' => 'Add Fiat',
-    'page callback' => 'ccdev_fiat_add',
-    'access arguments' => array('create ccdev_coin entities'),
-    'type' => MENU_LOCAL_ACTION,
-  );  */
 
   // List of all ccdev_coin entities.
   $items['admin/structure/ccdev_coin/manage/list'] = array(
@@ -148,12 +141,6 @@ $items['Coin'] = array(
     'access callback' => TRUE,
     'type' => MENU_CALLBACK,
   );
- ///  already added to admin structure menu
- /* $items['ccMod/ccCoin/basic/add'] = array(
-    'title' => 'Add Coin',
-    'page callback' => 'ccdev_coin_add',
-    'access arguments' => array('create ccdev_coin entities'),
-  ); */   
 	return $items;
 }
 

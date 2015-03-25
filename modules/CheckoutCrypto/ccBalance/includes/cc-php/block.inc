@@ -23,3 +23,13 @@ function balance_block_view($block_key){
 		}
 	}
 }
+
+function balance_block_setup(&$blocks, $theme, $code_blocks){
+        if (isset($blocks['ccBalance']['balance'])) {
+            $blocks['ccBalance']['balance']['status'] = 1;
+            $blocks['ccBalance']['balance']['region'] = 'sidebar_first';
+            $blocks['ccBalance']['balance']['weight'] = 2;
+            $blocks['ccBalance']['balance']['visibility'] = BLOCK_VISIBILITY_LISTED;
+            $blocks['ccBalance']['balance']['pages'] = 'Account';
+        }
+}

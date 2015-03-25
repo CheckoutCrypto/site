@@ -23,3 +23,13 @@ function coin_block_view($block_key){
 		}
 	}
 }
+
+function coin_block_setup(&$blocks, $theme, $code_blocks){
+        if (isset($blocks['ccCoin']['rates'])) {
+            $blocks['ccCoin']['rates']['status'] = 1;
+            $blocks['ccCoin']['rates']['region'] = 'sidebar_first';
+            $blocks['ccCoin']['rates']['weight'] = 2;
+            $blocks['ccCoin']['rates']['visibility'] = BLOCK_VISIBILITY_LISTED;
+            $blocks['ccCoin']['rates']['pages'] = 'Account';
+        }
+}

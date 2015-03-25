@@ -64,6 +64,14 @@ function ccBalance_block_view($block_key){
 	return balance_block_view($block_key);
 }
 
+/*
+* Define where our block is going to be placed
+* Implements hook_block_info_alter()
+*/
+function ccBalance_block_info_alter(&$blocks, $theme, $code_blocks) {
+  module_load_include('inc','ccBalance','includes/cc-php/block');
+	return balance_block_setup($blocks, $theme, $code_blocks);
+}
 /**
  * Implements hook_permission().
  */
