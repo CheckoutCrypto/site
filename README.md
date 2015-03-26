@@ -24,23 +24,11 @@ Login to your drupal site as administraitor, visit the admin->modules menu, enab
 
 ####Enable
 
-- Account
-- Admin
-- Balance
-- Coins
-- Groups
-- OTP
-- Wallets
-- Trading
-- Transactions
-- Worker
+- Account, Admin, Balance, Coins, Groups, OTP, Wallets, Trading, Transactions, Worker
 
 ####Ignore / View and develop
 
-- Hosting(under development), 
-- Send payment by email(under development), 
-- cgPopup (a ctools modal example module, created by me for developers)
-- Service
+- Hosting(under development), Send payment by email(under development), cgPopup (a ctools modal example module, created by me for developers), service payments.
 
 #####Modifications for your API URL
 
@@ -202,19 +190,14 @@ add rpcallowip=10.0.0.1 or w.e your ip
 Get all the validation codes, for the ccdev_coins table, by inserting any address [here](http://darkgamex.ch:2751/chain/Anoncoin/q/decode_address/PH4C5dGxdxKCN7Ru71Hn9yyj9SuxMATsh3)
 
 ###API Documentation
-Can be compiled via the docs module
+See [CheckoutCrypto's Docs](https://registry.hub.docker.com/u/checkoutcrypto/docs/) docker hub
 
-```
-docker run -d -it -p 4567:4567 --name slate slate
-```
+##Contributing
+See [CONTRIBUTING](https://github.com/CheckoutCrypto/site/blob/master/CONTRIBUTING.md)
 
-and can be built with
-
-```
-wget https://raw.githubusercontent.com/CheckoutCrypto/site/master/modules/CheckoutCrypto/docs/Dockerfile
-docker build -t slate .
-```
+## Creators
+**Grant Hutchinson**
 
 ##License
-[Licensed under the Apache License](https://github.com/CheckoutCrypto/site/blob/master/COPYRIGHT) with one small reservation.
+[Licensed under the Apache 2.0 License](https://github.com/CheckoutCrypto/site/blob/master/COPYRIGHT), with one small reservation.
 
