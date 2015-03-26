@@ -72,6 +72,14 @@
  *
  * @ingroup themeable
  */
+/*if($is_front){
+$title = "CheckoutCrypto";
+$suffix = "CheckoutCrypto";
+$prefix = "CheckoutCrypto";
+$description = "CheckoutCrypto";
+?>
+<?php
+}else{ */
 ?>
 <header id="navbar" role="banner" class="navbar navbar-static-top navbar-inverse">  <?php /// <?php print $navbar_classes; ?> 
   <div class="<?php print $container_class; ?>">

@@ -1,3 +1,7 @@
+docs:
+  image: checkoutcrypto/docs
+  ports:
+    - "4567:4567"
 dartworker:
   image: checkoutcrypto/worker-dart
   ports:

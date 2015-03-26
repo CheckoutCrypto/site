@@ -20,7 +20,31 @@ git clone site module, copy contents(modules, themes and .git folder) to a fresh
 
 cd /var/www/yoursite/sites/all && git submodule init && git submodule update
 
-Login to your drupal site as administraitor, visit the admin->modules menu, enable all checkoutcrypto modules except for Hosting(under development), Send payment by email(under development), cgPopup (a ctools example module, created by me for developers to see a working code for a vanilla ctools modal popup). You need to modify the ccAccount module's [API connection](https://github.com/CheckoutCrypto/site/blob/master/modules/CheckoutCrypto/ccAccount/includes/cc-php/cc.inc) (it's done automatically in docker build, not git).
+Login to your drupal site as administraitor, visit the admin->modules menu, enable all checkoutcrypto modules except:
+
+####Enable
+
+- Account
+- Admin
+- Balance
+- Coins
+- Groups
+- OTP
+- Wallets
+- Trading
+- Transactions
+- Worker
+
+####Ignore / View and develop
+
+- Hosting(under development), 
+- Send payment by email(under development), 
+- cgPopup (a ctools modal example module, created by me for developers)
+- Service
+
+#####Modifications for your API URL
+
+ You need to modify the ccAccount module's [API connection](https://github.com/CheckoutCrypto/site/blob/master/modules/CheckoutCrypto/ccAccount/includes/cc-php/cc.inc) (it's done automatically in docker build, not git).
 
 ```
 $base_url = '';
@@ -176,6 +200,20 @@ add rpcallowip=10.0.0.1 or w.e your ip
 
 ###Additional notes:
 Get all the validation codes, for the ccdev_coins table, by inserting any address [here](http://darkgamex.ch:2751/chain/Anoncoin/q/decode_address/PH4C5dGxdxKCN7Ru71Hn9yyj9SuxMATsh3)
+
+###API Documentation
+Can be compiled via the docs module
+
+```
+docker run -d -it -p 4567:4567 --name slate slate
+```
+
+and can be built with
+
+```
+wget https://raw.githubusercontent.com/CheckoutCrypto/site/master/modules/CheckoutCrypto/docs/Dockerfile
+docker build -t slate .
+```
 
 ##License
 [Licensed under the Apache License](https://github.com/CheckoutCrypto/site/blob/master/COPYRIGHT) with one small reservation.

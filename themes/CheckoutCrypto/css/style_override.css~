@@ -62,7 +62,7 @@ border-radius: 0px 0px 2px 2px;
 .carousel {
  top:-20px;
   height: 500px;
-  margin-bottom: 50px;
+  margin-bottom: 30px;
 }
 /* Since positioning the image, we need to help out the caption */
 .carousel-caption {
